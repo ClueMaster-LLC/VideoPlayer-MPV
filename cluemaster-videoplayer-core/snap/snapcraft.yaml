@@ -1,0 +1,331 @@
+name: cluemaster-mediadisplay-core 
+base: core22
+version: '2023.03.31'
+summary: Clumaster.io Media Display for Escape Rooms 
+description: |
+  ClueMaster Media Display is a Dynamic TV Display software for escape rooms.
+  It shows escape room countdown timers, visual text messages, video, audio,
+  and photo clues.
+grade: stable 
+confinement: strict 
+
+apps:
+  cluemaster-mediadisplay-core:
+    command-chain: &_command-chain
+      - bin/prepare-launch
+      - bin/wayland-launch
+      - bin/graphics-core22-wrapper
+    command: &_command cluemaster_display
+    environment: &_environment
+      QT_QPA_PLATFORM: wayland
+      QT_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/
+      QT_QPA_PLATFORM_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/platforms/
+
+  dameon:
+    daemon: simple
+    restart-condition: always
+    restart-delay: 3s
+    command-chain: *_command-chain
+    command: *_command
+    environment: *_environment
+
+  pulseaudio:
+    command: bin/pulseaudio
+    daemon: simple
+    restart-condition: always
+    install-mode: enable
+
+  pactl:
+    command-chain: [bin/client-wrapper]
+    command: usr/bin/pactl
+
+  paplay:
+    command-chain: [bin/client-wrapper]
+    command: usr/bin/paplay
+
+  parec:
+    command-chain: [bin/client-wrapper]
+    command: usr/bin/parec
+
+  config:
+    command: bin/config
+
+plugs:
+  playback:
+    interface: audio-playback
+  wayland:
+  network:
+  network-bind:
+  shutdown:
+  opengl:
+  hardware-observe:
+  alsa:
+  graphics-core22:
+    interface: content
+    target: $SNAP/graphics
+    default-provider: mesa-core22
+
+slots:
+  audio-playback:
+
+parts:
+  copy-source-code:
+    plugin: dump
+    source: cluemaster_display/
+    stage-packages:
+      - ffmpeg
+      - libass9
+      - mpv
+      - alsa-base
+      - locales
+      - libvdpau1
+      - i965-va-driver
+      - libmpv1
+      - va-driver-all
+      - vdpau-driver-all
+      - mesa-va-drivers
+      - libvdpau-va-gl1
+      - libglu1-mesa
+      - samba-libs
+      - git
+      - python3-dbus
+      - qtwayland5
+      - mesa-utils
+      - libgl1-mesa-dri
+      - python3-pyqt5.qtmultimedia
+      - libqt5multimedia5-plugins
+      - libxkbcommon0
+      - locales-all
+      - xdg-user-dirs
+      - libdrm2
+      - libgbm1
+      - libdrm-intel1
+      - libdrm-nouveau2
+      - libdrm-radeon1
+      - libegl1
+      - libglapi-mesa
+      - libglvnd0
+      - libglx0
+      - fcitx-frontend-qt5
+      - libpulse0
+
+    stage:
+      - -usr/share/alsa/alsa.conf
+
+  extras:
+    plugin: dump
+    source: static/
+    organize:
+      "prepare-launch": "bin/"
+
+  pulseaudio-common:
+    source: bin
+    plugin: dump
+    organize:
+      client-wrapper: bin/client-wrapper
+      config: bin/config
+      pulseaudio: bin/pulseaudio
+  alsa-lib:
+    plugin: autotools
+    source: https://github.com/alsa-project/alsa-lib.git
+    source-tag: v1.2.5.1
+    prime:
+      - -usr/include
+      - -usr/share/aclocal
+      - -usr/lib/lib*.la
+      - -usr/lib/pkgconfig
+  pulseaudio:
+    plugin: meson
+    source: https://github.com/pulseaudio/pulseaudio.git
+    source-tag: v15.0
+    source-depth: 1
+    after: [ alsa-lib]
+    build-packages:
+      - check
+      - doxygen
+      - intltool
+      - libapparmor-dev
+      - libdbus-1-dev
+      - libjson-c-dev
+      - libglib2.0-dev
+      - libspeexdsp-dev
+      - libbluetooth-dev
+      - libltdl-dev
+      - libsndfile1-dev
+      - libtdb-dev
+      - libudev-dev
+      - libasyncns-dev
+      - libsbc-dev
+      - libsnapd-glib-dev
+      - libsoxr-dev
+      - meson
+    stage-packages:
+      - libapparmor1
+      - libasyncns0
+      - libbluetooth3
+      - libflac8
+      - libglib2.0-0
+      - libgomp1
+      - libjson-c5
+      - libltdl7
+      - libogg0
+      - libsbc1
+      - libsnapd-glib1
+      - libsndfile1
+      - libsoxr0
+      - libsoxr-lsr0
+      - libspeexdsp1
+      - libtdb1
+      - libudev1
+      - libvorbis0a
+      - libvorbisenc2
+    meson-parameters:
+      - --prefix=/usr
+      - --sysconfdir=/etc
+      - --libexec=/usr/lib
+      - --libdir=/usr/lib
+      - --localstatedir=/var
+      - -Dgstreamer=disabled
+      - -Dbluez5-gstreamer=disabled
+      - -Dorc=disabled
+      - -Dgsettings=disabled
+      - -Dadrian-aec=false
+      - -Dgtk=disabled
+      - -Dhal-compat=false
+      - -Dwebrtc-aec=disabled
+      - -Doss-output=disabled
+      - -Djack=disabled
+      - -Dx11=disabled
+      - -Dsystem_user=root
+      - -Dsystem_group=root
+      - -Daccess_group=root
+    override-prime: |
+      craftctl default
+      find usr/share/doc/ -type f,l ! -name copyright | xargs rm -rf
+    prime:
+      - -usr/include
+      - -usr/share/zsh
+      - -usr/share/bash-completion
+      - -usr/share/man
+      - -usr/share/GConf
+      - -usr/share/lintian
+      - -usr/share/vala
+      - -usr/libexec
+      - -usr/lib/cmake
+      - -usr/lib/pkgconfig
+      - -usr/lib/systemd
+      - -etc/dconf
+  alsa-plugins:
+    plugin: autotools
+    source: https://github.com/alsa-project/alsa-plugins.git
+    source-tag: v1.2.5
+    after: [ pulseaudio, alsa-lib ]
+    autotools-configure-parameters:
+      - --prefix=/usr
+      - --with-alsalconfdir=/etc/alsa/conf.d
+      - --sysconfdir=/etc/alsa/conf.d
+    prime:
+      - -usr/lib/alsa-lib/*.la
+    override-prime: |
+      snapcraftctl prime
+      # make links relative
+      cd etc/alsa/conf.d
+      for link in $(find . -type l); do
+        newlink=$(readlink $link|sed 's;^/;../../../;')
+        ln -sf $newlink $link
+      done
+      cd -
+  alsa-ucm:
+    plugin: dump
+    source: https://github.com/alsa-project/alsa-ucm-conf.git
+    source-tag: v1.2.5.1
+    after: [ alsa-plugins ]
+    organize:
+      ucm: usr/share/alsa/ucm
+      ucm2: usr/share/alsa/ucm2
+    stage:
+      - -README.md
+
+  graphics-core22:
+    after:
+      - copy-source-code
+      - extras
+      - pulseaudio-common
+      - alsa-lib
+      - pulseaudio
+      - alsa-plugins
+      - alsa-ucm
+    source: https://github.com/MirServer/graphics-core22.git
+    plugin: dump
+    override-prime: |
+      craftctl default
+      ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22 nvidia-core22
+    prime:
+    - bin/graphics-core22-wrapper
+
+  wayland-launch:
+    plugin: dump
+    source: wayland-launch
+    override-build: |
+      PLUGS="opengl wayland graphics-core22"
+      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/wayland-launch
+      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/setup.sh
+      snapcraftctl build
+    stage-packages:
+      - inotify-tools
+
+environment:
+  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib:$SNAP/graphics/lib"
+  PULSE_RUNTIME_PATH: /var/run/pulse
+  PULSE_STATE_PATH: $SNAP_COMMON/state
+  ALSA_CONFIG_UCM: $SNAP/usr/share/alsa/ucm2
+  ALSA_CONFIG_TPLG: $SNAP/usr/share/alsa/topology
+  ALSA_CONFIG_PATH: $SNAP/usr/share/alsa/alsa.conf
+  ALSA_MIXER_SIMPLE: $SNAP/usr/share/alsa/smixer.conf
+  ALSA_PLUGIN_DIR: $SNAP/usr/lib/alsa-lib
+  LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
+  LIBVA_DRIVERS_PATH: $SNAP/graphics/dri
+  __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
+  XDG_CACHE_HOME:  $SNAP_USER_COMMON/.cache
+  XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
+  XDG_CONFIG_DIRS: $SNAP/etc/xdg
+  XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+
+
+layout:
+  # /usr/share/X11:
+  #   bind: $SNAP/usr/share/X11
+  /usr/bin/xkbcomp:
+    symlink: $SNAP/usr/bin/xkbcomp
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /usr/local/share/fonts:
+    bind: $SNAP/usr/local/share/fonts
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+  /etc/pulse:
+    bind: $SNAP/etc/pulse
+  /etc/alsa:
+    bind: $SNAP/etc/alsa
+  /var/lib/pulse:
+    bind: $SNAP_DATA
+  /usr/lib/pulse-15.0:
+    symlink: $SNAP/usr/lib/pulse-15.0
+  /usr/lib/alsa-lib:
+    bind: $SNAP/usr/lib/alsa-lib
+  /usr/share/pulseaudio:
+    symlink: $SNAP/usr/share/pulseaudio
+  /usr/share/alsa:
+    symlink: $SNAP/usr/share/alsa
+  /usr/share/applications:
+    bind: $SNAP/usr/share/applications
+  /usr/share/drirc.d:
+    symlink: $SNAP_COMMON/graphics/usr/share/drirc.d
+  /usr/share/X11/XErrorDB:
+    bind: $SNAP/graphics/usr/share/X11/XErrorDB
+  /usr/share/X11/locale:
+    bind: $SNAP/graphics/usr/share/X11/locale
+  /usr/share/libdrm:
+    bind: $SNAP/graphics/libdrm
