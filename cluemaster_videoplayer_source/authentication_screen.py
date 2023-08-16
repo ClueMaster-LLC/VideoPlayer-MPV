@@ -5,6 +5,7 @@ import json
 import requests
 import simplejson.errors
 from apis import *
+from settings import *
 from requests.structures import CaseInsensitiveDict
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QFont, QMovie, QKeySequence
@@ -58,7 +59,7 @@ class AuthenticationBackend(QThread):
                     # device_request_api.raise_for_status()  # raise error if status code of request is not 200
                     # print("raise_for_status_passed")
                     if device_request_api.status_code != 200:
-                        print("Device Registration - Device Request API status not 200")
+                        print(f"Device Registration - Device Request API status code is {device_request_api.status_code}")
                         time.sleep(3)
                         pass
 
@@ -305,7 +306,7 @@ class AuthenticationBackend(QThread):
                     room_info_api = requests.get(room_info_api_url, headers=headers)
                     room_info_api.raise_for_status()
                     if room_info_api.content.decode("utf-8") != "No Configurations Files Found":
-                        # downloading the new room configurations into device configurations.json file
+                        # downloading the new room configurations into device_configurations.json file
 
                         json_data_of_configuration_files = room_info_api.json()
 
@@ -319,7 +320,7 @@ class AuthenticationBackend(QThread):
                                 "Time Limit": json_data_of_configuration_files["TimeLimit"],
                                 "Time Override": json_data_of_configuration_files["TimeOverride"]}
 
-                        with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device configurations.json"), "w") as file:
+                        with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device_configurations.json"), "w") as file:
                             json.dump(data, file)
 
                     self.proceed.emit(True)

@@ -3,6 +3,7 @@ import time
 import requests
 import simplejson
 from apis import *
+from settings import *
 from requests.structures import CaseInsensitiveDict
 from PyQt5.QtCore import QThread, pyqtSignal
 import os
@@ -292,7 +293,7 @@ class UpdateRoomInfo(QThread):
                               "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
                               "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
 
-                with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json"), "w") as device_config_json_file:
+                with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json"), "w") as device_config_json_file:
                     json.dump(dictionary, device_config_json_file)
 
             except requests.exceptions.ConnectionError:

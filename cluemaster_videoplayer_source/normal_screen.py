@@ -9,6 +9,7 @@ import master_overlay
 import clue_containers
 import simplejson.errors
 from apis import *
+from settings import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -812,7 +813,7 @@ class NormalWindow(QMainWindow):
         """ this method triggers the NetworkStatus window and the ClueContainers window and then starts the master
             or background videos or audios or displays the background picture based on a hierarchy order"""
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json")) as device_configurations_json_file:
+        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as device_configurations_json_file:
             initial_dictionary = json.load(device_configurations_json_file)
 
         room_info_response = initial_dictionary
@@ -824,7 +825,7 @@ class NormalWindow(QMainWindow):
 
             print(">>> Master Media Files - Music", initial_dictionary_of_game_details['isMusic'])
 
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json")) as device_configurations_json_file:
+            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as device_configurations_json_file:
                 initial_dictionary_of_room_info = json.load(device_configurations_json_file)
 
             game_details_response = initial_dictionary_of_game_details
@@ -1261,7 +1262,7 @@ class NormalWindow(QMainWindow):
     def master_end_media_container(self, status):
         """ this method starts the EndMediaWidget widow and show the end media that is either win video or lost video"""
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json")) as device_configurations_json_file:
+        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as device_configurations_json_file:
             initial_dictionary = json.load(device_configurations_json_file)
 
         room_info_response = initial_dictionary

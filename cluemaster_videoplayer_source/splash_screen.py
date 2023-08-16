@@ -29,8 +29,8 @@ class SplashBackend(QThread):
         super(SplashBackend, self).__init__()
 
         # default variables
+        self.var_skip_authentication = None
         self.is_killed = False
-        self.var_skip_authentication = False
 
     def run(self):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
@@ -62,7 +62,7 @@ class SplashBackend(QThread):
                     headers = CaseInsensitiveDict()
                     headers["Authorization"] = f"Basic {device_unique_code}:{api_key}"
 
-                    if requests.get(device_files_url, headers=headers).status_code != 200:
+                    if requests.get(device_files_url, headers=headers).status_code == 401:
                         # if response is 401 from the GetDeviceFiles api then, register the device
                         api_key = self.generate_secure_api_key(device_id=device_unique_code)
                         json_object_of_unique_code_file["apiKey"] = api_key
@@ -247,7 +247,7 @@ class SplashWindow(QWidget):
         application_name = QLabel(self)
         application_name.setFont(self.font)
         application_name.setText("ClueMaster Video Player")
-        application_name.setStyleSheet("color: white; font-weight: 700;")
+        application_name.setStyleSheet("color: white; font-size: 30px; font-weight: 700;")
 
         version = QLabel(self)
         version.setText(f"Version : {snap_version}")
@@ -287,7 +287,8 @@ class SplashWindow(QWidget):
         self.splash_thread = SplashBackend()
         self.splash_thread.start()
         # self.splash_thread.skip_authentication.connect(self.switch_window)
-        self.switch_window(self.var_skip_authentication)
+        var_skip = True
+        self.switch_window(var_skip)
 
     def switch_window(self, skip):
         """ this method is triggered as soon as the skip_authentication signal is emitted by the backend thread"""
@@ -312,6 +313,7 @@ class SplashWindow(QWidget):
 
 
 def fetch_device_ipv4_address():
+    ip_address = None
     i_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     try:

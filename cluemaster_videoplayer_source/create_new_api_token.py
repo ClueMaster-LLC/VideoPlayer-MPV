@@ -4,6 +4,7 @@ import json
 import requests
 from string import Template
 from apis import *
+from settings import *
 from requests.structures import CaseInsensitiveDict
 
 # ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))

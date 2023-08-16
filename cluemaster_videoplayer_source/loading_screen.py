@@ -1,12 +1,11 @@
-import os
-import random
+import socket
 import time
 import requests
 import json
 import simplejson
 import shutil
-import platform_facts
 from apis import *
+from settings import *
 from requests.structures import CaseInsensitiveDict
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QApplication, QShortcut, QHBoxLayout, QProgressBar
 from PyQt5.QtGui import QFont, QMovie, QKeySequence
@@ -51,7 +50,7 @@ class LoadingBackend(QThread):
             headers["Authorization"] = f"Basic {device_unique_code}:{api_key}"
 
             while self.is_killed is False:
-                print(">>> Console output - Loading Screen Backend")
+                print(">>> Loading_Screen output - Loading Screen Backend")
 
                 room_info_api = requests.get(room_info_api_url, headers=headers)
                 room_info_api.raise_for_status()
@@ -373,10 +372,11 @@ class LoadingBackend(QThread):
                             "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
                             "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
 
-                    with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device configurations.json"), "w") as file:
+                    with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device_configurations.json"), "w") as file:
                         json.dump(data, file)
 
                     self.proceed.emit(True)
+                    print(">> loading_screen - Finished Loading")
                     self.stop()
 
                 else:
@@ -464,7 +464,7 @@ class LoadingScreen(QWidget):
         """ this method contains all the codes for the labels and the animations in the authentications window"""
 
         self.main_layout = QVBoxLayout()
-        self.footer_layout = QHBoxLayout()
+        self.footer_layout = QVBoxLayout()
 
         gif = QMovie(os.path.join(ROOT_DIRECTORY, "assets/icons/loading_beaker.gif"))
         gif.start()
@@ -486,6 +486,13 @@ class LoadingScreen(QWidget):
         self.download_media_files_progressbar.setFixedWidth(int(30 / 100 * self.screen_width))
         self.download_media_files_progressbar.setFixedHeight(int(4 / 100 * self.screen_height))
 
+        self.local_ipv4_address = QLabel(self)
+        self.local_ipv4_address.setAlignment(Qt.AlignHCenter)
+        self.local_ipv4_address.setFont(QFont("IBM Plex Mono", 20))
+        self.local_ipv4_address.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
+        self.local_ipv4_address.setText("Local IP : " + fetch_device_ipv4_address())
+        self.local_ipv4_address.show()
+
         stylesheet = """QProgressBar{background-color: transparent; border: 3px solid #4e71cf; border-radius: 5px;}
                 QProgressBar::chunk{background-color: #4e71cf;}"""
 
@@ -494,6 +501,7 @@ class LoadingScreen(QWidget):
 
         self.footer_layout.addStretch(1)
         self.footer_layout.addWidget(self.download_media_files_progressbar, alignment=Qt.AlignHCenter)
+        self.footer_layout.addWidget(self.local_ipv4_address, alignment=Qt.AlignHCenter)
         self.footer_layout.addStretch(1)
 
         self.main_layout.addStretch()
@@ -575,3 +583,17 @@ class LoadingScreen(QWidget):
         else:
             pass
 
+
+def fetch_device_ipv4_address():
+    ip_address = None
+    i_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    try:
+        i_socket.connect(('10.255.255.255', 1))
+        ip_address = i_socket.getsockname()[0]
+    except socket.error:
+        ip_address = "127.0.0.1"
+    finally:
+        i_socket.close()
+        print(">>> auto_startup - Device IP Address: " + ip_address)
+    return ip_address

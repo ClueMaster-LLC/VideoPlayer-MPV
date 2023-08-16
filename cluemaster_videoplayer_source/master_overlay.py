@@ -7,6 +7,7 @@ import threads
 import time
 import json
 from apis import *
+from settings import *
 from datetime import datetime
 from requests.structures import CaseInsensitiveDict
 
@@ -68,7 +69,7 @@ class ClueContainer(QWidget):
 
         self.clue_icons_available = []
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json")) as device_configurations_json_file:
+        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as device_configurations_json_file:
             initial_dictionary = json.load(device_configurations_json_file)
 
         self.device_configurations_response = initial_dictionary
@@ -355,7 +356,7 @@ class MasterOverlay(QWidget):
         print("Console Output - Load application timer")
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json")) as device_configurations_json_file:
+            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as device_configurations_json_file:
                 initial_dictionary = json.load(device_configurations_json_file)
 
             room_info_response = initial_dictionary

@@ -7,6 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtSvg import QSvgWidget
 import os
 from apis import *
+from settings import *
 import json
 import threads
 from requests.structures import CaseInsensitiveDict
@@ -123,7 +124,7 @@ class GameIdle(QMainWindow):
         """this method sets the available background image to the window as the central widget"""
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device configurations.json")) as configurations_json_file:
+            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as configurations_json_file:
                 initial_dictionary = json.load(configurations_json_file)
 
             room_info_response = initial_dictionary

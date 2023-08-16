@@ -10,6 +10,7 @@ import threads
 import json
 import mpv
 from apis import *
+from settings import *
 from requests.structures import CaseInsensitiveDict
 
 # Setting up base directories
