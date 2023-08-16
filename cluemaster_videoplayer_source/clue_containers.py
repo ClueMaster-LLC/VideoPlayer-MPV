@@ -14,8 +14,8 @@ from requests.structures import CaseInsensitiveDict
 
 # Setting up base directories
 
-ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
+# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
 
 # Pulling up platform specifications
 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json")) as platform_specs_file:

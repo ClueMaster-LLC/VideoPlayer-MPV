@@ -10,8 +10,11 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QFont, QMovie, QKeySequence
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QShortcut, QProgressBar, QHBoxLayout
 
-ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
+from settings import *
+
+
+# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
 
 
 class AuthenticationBackend(QThread):

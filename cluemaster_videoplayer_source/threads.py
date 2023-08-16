@@ -7,8 +7,8 @@ from requests.structures import CaseInsensitiveDict
 from PyQt5.QtCore import QThread, pyqtSignal
 import os
 
-ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
+# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
 
 
 class GameDetails(QThread):

@@ -12,8 +12,8 @@ from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QApplication, QShortcu
 from PyQt5.QtGui import QFont, QMovie, QKeySequence
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
-ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
+# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
 
 
 class LoadingBackend(QThread):

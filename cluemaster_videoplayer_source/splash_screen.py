@@ -1,5 +1,6 @@
 import os
 import json
+import socket
 import uuid
 import re
 import random
@@ -7,6 +8,7 @@ import time
 import subprocess
 import requests
 from apis import *
+from settings import *
 from string import Template
 from requests.structures import CaseInsensitiveDict
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
@@ -14,8 +16,8 @@ from PyQt5.QtGui import QFont, QMovie, QIcon
 from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QDesktopWidget
 
 # Setting up the base directories
-ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
+# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterVideoPlayer")
 
 snap_version = os.environ.get("SNAP_VERSION")
 
@@ -84,23 +86,27 @@ class SplashBackend(QThread):
                     break
 
         else:
-            # if there is no unique code.json file then generate an unique device id and secure api key and then save
+            # if there is no unique code.json file then generate a unique device id and secure api key and then save
             # them to unique code.json file and register device
+            print(f'No Unique Registration Code File Exists')
+            try:
 
-            with open("/proc/cpuinfo") as master_cpu_info_file:
-                file_data = master_cpu_info_file.read()
+                with open("/proc/cpuinfo") as master_cpu_info_file:
+                    file_data = master_cpu_info_file.read()
 
-                if "hypervisor" in file_data:
-                    dictionary = {"platform": "VirtualMachine", "mpv_configurations": {"vo": "x11"}}
-                elif "Intel" in file_data:
-                    dictionary = {"platform": "Intel", "mpv_configurations": {"hwdec": "auto", "vo": "gpu", "gpu_context": "auto"}}
-                elif "AMD" in file_data:
-                    dictionary = {"platform": "AMD", "mpv_configurations": {"hwdec": "auto", "vo": "gpu", "gpu_context": "auto"}}
-                else:
-                    dictionary = {"platform": "Unspecified"}
+                    if "hypervisor" in file_data:
+                        dictionary = {"platform": "VirtualMachine", "mpv_configurations": {"vo": "x11"}}
+                    elif "Intel" in file_data:
+                        dictionary = {"platform": "Intel", "mpv_configurations": {"hwdec": "auto", "vo": "gpu", "gpu_context": "auto"}}
+                    elif "AMD" in file_data:
+                        dictionary = {"platform": "AMD", "mpv_configurations": {"hwdec": "auto", "vo": "gpu", "gpu_context": "auto"}}
+                    else:
+                        dictionary = {"platform": "Unspecified"}
 
-                with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json"), "w") as specs_file:
-                    json.dump(dictionary, specs_file)
+                    with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json"), "w") as specs_file:
+                        json.dump(dictionary, specs_file)
+            except Exception as master_cpu_info_file_error:
+                print(f'{master_cpu_info_file_error}')
 
             numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
             alphabets = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
@@ -119,11 +125,14 @@ class SplashBackend(QThread):
 
             full_unique_code = first_pair + "-" + second_pair + "-" + third_pair + "-" + fourth_pair
             api_key = self.generate_secure_api_key(device_id=full_unique_code)
-            ipv4_address = self.fetch_ipv4_device_address()
+            ipv4_address = fetch_device_ipv4_address()
 
             json_object = {"Device Unique Code": full_unique_code, "apiKey": api_key, "IPv4 Address": ipv4_address}
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as file:
-                json.dump(json_object, file)
+            try:
+                with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as file:
+                    json.dump(json_object, file)
+            except Exception as error:
+                print(f'Error = {error}')
 
             self.skip_authentication.emit(False)
 
@@ -150,11 +159,11 @@ class SplashBackend(QThread):
                 time.sleep(3)
                 pass
 
-    def fetch_ipv4_device_address(self):
-        """ this method fetches the device ipv4 address"""
-
-        initial_output = subprocess.getoutput("hostname -I")
-        return initial_output
+    # def fetch_ipv4_device_address(self):
+    #     """ this method fetches the device ipv4 address"""
+    #
+    #     initial_output = subprocess.getoutput("hostname -I")
+    #     return initial_output
 
     def stop(self):
         """ this method stops the thread by setting the is_killed attribute to False and then calling the run() methods
@@ -227,12 +236,12 @@ class SplashWindow(QWidget):
 
         self.main_layout = QVBoxLayout()
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_file:
-            unique_code_json_response = json.load(unique_code_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_file:
+        #     unique_code_json_response = json.load(unique_code_file)
 
         application_name = QLabel(self)
         application_name.setFont(self.font)
-        application_name.setText("ClueMaster TV Display Timer")
+        application_name.setText("ClueMaster Video Player")
         application_name.setStyleSheet("color: white; font-weight: 700;")
 
         version = QLabel(self)
@@ -240,10 +249,13 @@ class SplashWindow(QWidget):
         version.setFont(self.font)
         version.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
 
+        # unique_code_json_response = self.fetch_device_ipv4_address()
+        # print(f'{unique_code_json_response}')
         local_ipv4_address = QLabel(self)
         local_ipv4_address.setFont(self.font)
         local_ipv4_address.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
-        local_ipv4_address.setText("Local IP : " + unique_code_json_response["IPv4 Address"].split(" ")[0])
+        # local_ipv4_address.setText("Local IP : " + unique_code_json_response["IPv4 Address"].split(" ")[0])
+        local_ipv4_address.setText("Local IP : " + fetch_device_ipv4_address())
 
         gif = QMovie(os.path.join(ROOT_DIRECTORY, "assets/icons/security_loading.gif"))
         gif.start()
@@ -269,11 +281,12 @@ class SplashWindow(QWidget):
 
         self.splash_thread = SplashBackend()
         self.splash_thread.start()
-        self.splash_thread.skip_authentication.connect(self.switch_window)
+        # self.splash_thread.skip_authentication.connect(self.switch_window)
+        self.switch_window(False)
 
     def switch_window(self, skip):
         """ this method is triggered as soon as the skip_authentication signal is emitted by the backend thread"""
-
+        print(f'Thread for splash : skip = {skip}')
         self.splash_thread.stop()
 
         if skip is True:
@@ -286,8 +299,22 @@ class SplashWindow(QWidget):
         else:
             if skip is False:
                 # if False if emitted by the skip_authentication signal then, have the device authenticated
+                print(f'Loading Auth Screen')
                 import authentication_screen
                 self.i_window = authentication_screen.AuthenticationWindow()
                 self.i_window.show()
                 self.deleteLater()
 
+
+def fetch_device_ipv4_address():
+    i_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    try:
+        i_socket.connect(('10.255.255.255', 1))
+        ip_address = i_socket.getsockname()[0]
+    except Exception:
+        ip_address = "127.0.0.1"
+    finally:
+        i_socket.close()
+        print(">>> auto_startup - Device IP Address: " + ip_address)
+    return ip_address
