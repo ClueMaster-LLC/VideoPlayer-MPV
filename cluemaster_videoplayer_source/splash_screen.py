@@ -30,6 +30,7 @@ class SplashBackend(QThread):
 
         # default variables
         self.is_killed = False
+        self.var_skip_authentication = False
 
     def run(self):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
@@ -66,10 +67,12 @@ class SplashBackend(QThread):
                         api_key = self.generate_secure_api_key(device_id=device_unique_code)
                         json_object_of_unique_code_file["apiKey"] = api_key
                         self.skip_authentication.emit(False)
+                        self.var_skip_authentication = False
 
                     else:
                         # else jump to loading screen
                         self.skip_authentication.emit(True)
+                        self.var_skip_authentication = True
 
                     ipv4_address = self.fetch_ipv4_device_address()
                     json_object_of_unique_code_file["IPv4 Address"] = ipv4_address
@@ -178,6 +181,8 @@ class SplashWindow(QWidget):
         super().__init__()
 
         # default variables
+        self.splash_thread = None
+        self.i_window = None
         self.screen_width = QApplication.desktop().width()
         self.screen_height = QApplication.desktop().height()
 
@@ -282,7 +287,7 @@ class SplashWindow(QWidget):
         self.splash_thread = SplashBackend()
         self.splash_thread.start()
         # self.splash_thread.skip_authentication.connect(self.switch_window)
-        self.switch_window(False)
+        self.switch_window(self.var_skip_authentication)
 
     def switch_window(self, skip):
         """ this method is triggered as soon as the skip_authentication signal is emitted by the backend thread"""
@@ -298,7 +303,7 @@ class SplashWindow(QWidget):
 
         else:
             if skip is False:
-                # if False if emitted by the skip_authentication signal then, have the device authenticated
+                # if False is emitted by the skip_authentication signal then, have the device authenticated
                 print(f'Loading Auth Screen')
                 import authentication_screen
                 self.i_window = authentication_screen.AuthenticationWindow()
@@ -312,7 +317,7 @@ def fetch_device_ipv4_address():
     try:
         i_socket.connect(('10.255.255.255', 1))
         ip_address = i_socket.getsockname()[0]
-    except Exception:
+    except socket.error:
         ip_address = "127.0.0.1"
     finally:
         i_socket.close()
