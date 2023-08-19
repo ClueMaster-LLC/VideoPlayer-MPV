@@ -9,6 +9,7 @@ import subprocess
 import requests
 from apis import *
 from settings import *
+import main
 from string import Template
 from requests.structures import CaseInsensitiveDict
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
@@ -22,6 +23,22 @@ from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QDesktop
 snap_version = os.environ.get("SNAP_VERSION")
 
 
+def fetch_ipv4_device_address():
+    ip_address = None
+    i_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    try:
+        i_socket.connect(('10.255.255.255', 1))
+        ip_address = i_socket.getsockname()[0]
+    except socket.error:
+        ip_address = "127.0.0.1"
+    finally:
+        i_socket.close()
+        print(">>> auto_startup - Device IP Address: " + ip_address)
+        main.ipv4 = ip_address
+    return ip_address
+
+
 class SplashBackend(QThread):
     skip_authentication = pyqtSignal(bool)
 
@@ -31,6 +48,7 @@ class SplashBackend(QThread):
         # default variables
         self.var_skip_authentication = None
         self.is_killed = False
+        # main.ipv4 = fetch_ipv4_device_address()
 
     def run(self):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
@@ -67,15 +85,16 @@ class SplashBackend(QThread):
                         api_key = self.generate_secure_api_key(device_id=device_unique_code)
                         json_object_of_unique_code_file["apiKey"] = api_key
                         self.skip_authentication.emit(False)
-                        self.var_skip_authentication = False
+                        # self.var_skip_authentication = False
 
                     else:
                         # else jump to loading screen
                         self.skip_authentication.emit(True)
-                        self.var_skip_authentication = True
+                        # self.var_skip_authentication = True
 
-                    ipv4_address = self.fetch_ipv4_device_address()
-                    json_object_of_unique_code_file["IPv4 Address"] = ipv4_address
+                    # main.ipv4 = self.fetch_ipv4_device_address()
+                    # ipv4_address = self.fetch_ipv4_device_address()
+                    json_object_of_unique_code_file["IPv4 Address"] = main.ipv4
 
                     with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as unique_code_json_file:
                         json.dump(json_object_of_unique_code_file, unique_code_json_file)
@@ -128,9 +147,10 @@ class SplashBackend(QThread):
 
             full_unique_code = first_pair + "-" + second_pair + "-" + third_pair + "-" + fourth_pair
             api_key = self.generate_secure_api_key(device_id=full_unique_code)
-            ipv4_address = fetch_device_ipv4_address()
+            # main.ipv4 = fetch_device_ipv4_address()
+            # ipv4_address = main.ipv4
 
-            json_object = {"Device Unique Code": full_unique_code, "apiKey": api_key, "IPv4 Address": ipv4_address}
+            json_object = {"Device Unique Code": full_unique_code, "apiKey": api_key, "IPv4 Address": main.ipv4}
             try:
                 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as file:
                     json.dump(json_object, file)
@@ -200,13 +220,14 @@ class SplashWindow(QWidget):
         self.font.setWordSpacing(2)
         self.font.setLetterSpacing(QFont.AbsoluteSpacing, 1)
 
-        qtRectangle = self.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
+        # qtRectangle = self.frameGeometry()
+        # centerPoint = QDesktopWidget().availableGeometry().center()
+        # qtRectangle.moveCenter(centerPoint)
+        # self.move(qtRectangle.topLeft())
 
-        self.setFixedHeight(int(self.screen_height // 2.5))
-        self.setFixedWidth(int(self.screen_width // 2.75))
+        # self.setFixedHeight(int(self.screen_height // 2.5))
+        # self.setFixedWidth(int(self.screen_width // 2.75))
+        self.setFixedSize(self.screen_width, self.screen_height)
         self.setWindowIcon(QIcon("assets/icons/app_icon.png"))
         self.setWindowFlag(Qt.FramelessWindowHint)
 
@@ -260,7 +281,7 @@ class SplashWindow(QWidget):
         local_ipv4_address.setFont(self.font)
         local_ipv4_address.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
         # local_ipv4_address.setText("Local IP : " + unique_code_json_response["IPv4 Address"].split(" ")[0])
-        local_ipv4_address.setText("Local IP : " + fetch_device_ipv4_address())
+        local_ipv4_address.setText("Local IP : " + fetch_ipv4_device_address())
 
         gif = QMovie(os.path.join(ROOT_DIRECTORY, "assets/icons/security_loading.gif"))
         gif.start()
@@ -286,9 +307,9 @@ class SplashWindow(QWidget):
 
         self.splash_thread = SplashBackend()
         self.splash_thread.start()
-        # self.splash_thread.skip_authentication.connect(self.switch_window)
-        var_skip = True
-        self.switch_window(var_skip)
+        self.splash_thread.skip_authentication.connect(self.switch_window)
+        # var_skip = True
+        # self.switch_window(var_skip)
 
     def switch_window(self, skip):
         """ this method is triggered as soon as the skip_authentication signal is emitted by the backend thread"""
@@ -310,18 +331,3 @@ class SplashWindow(QWidget):
                 self.i_window = authentication_screen.AuthenticationWindow()
                 self.i_window.show()
                 self.deleteLater()
-
-
-def fetch_device_ipv4_address():
-    ip_address = None
-    i_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    try:
-        i_socket.connect(('10.255.255.255', 1))
-        ip_address = i_socket.getsockname()[0]
-    except socket.error:
-        ip_address = "127.0.0.1"
-    finally:
-        i_socket.close()
-        print(">>> auto_startup - Device IP Address: " + ip_address)
-    return ip_address

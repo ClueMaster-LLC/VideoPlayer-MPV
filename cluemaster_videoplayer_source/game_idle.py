@@ -20,6 +20,8 @@ from requests.structures import CaseInsensitiveDict
 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json")) as platform_specs_file:
     PLATFORM = json.load(platform_specs_file)["platform"]
 
+print(f"Game Idle Screen Loading")
+
 
 class GameIdleMPVPlayer(QWidget):
 
@@ -133,10 +135,25 @@ class GameIdle(QMainWindow):
                 if room_info_response["IsPhoto"] is True:
                     # checking if photo is enabled in the webapp
                     self.picture_location = os.path.join(MASTER_DIRECTORY, "assets/room data/picture/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/picture/"))[0]))
+                    self.video_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
 
-                    if self.picture_location.endswith(".apng") or self.picture_location.endswith(".ajpg") or \
+                    if self.video_location.endswith(".mp4") or self.video_location.endswith(".mkv") or \
+                            self.video_location.endswith(".mpg") or self.video_location.endswith(".mpeg") or \
+                            self.video_location.endswith(".m4v"):
+
+                        print(f"game_idle = MP4 Background Video Found")
+                        self.is_intro_video_playing = True
+                        self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.video_location)
+                        self.external_master_mpv_players.setParent(self)
+                        self.external_master_mpv_players.showFullScreen()
+                        self.external_master_mpv_players.loop = True
+                        # self.external_intro_video_window.intro_video_ended.connect(
+                        #     self.verify_status_of_intro_video_window)
+
+                    elif self.picture_location.endswith(".apng") or self.picture_location.endswith(".ajpg") or \
                             self.picture_location.endswith(".gif"):
 
+                        print(f"game_idle = Photo Background Found")
                         self.mpv_player_triggered = True
                         self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.picture_location)
                         self.external_master_mpv_players.setParent(self)
@@ -144,6 +161,7 @@ class GameIdle(QMainWindow):
 
                     elif self.picture_location.endswith(".svg"):
 
+                        print(f"game_idle = SVG Animated Background Found")
                         self.svg_widget = QSvgWidget(self.picture_location)
                         self.svg_widget.resize(self.screen_width, self.screen_height)
                         self.svg_widget.setParent(self)
@@ -164,6 +182,7 @@ class GameIdle(QMainWindow):
         except simplejson.errors.JSONDecodeError:
             # if the code inside the try block faces simplejson decode error then pass
             pass
+
 
     def restart_device(self):
         """ this method is triggered as soon as the restart signal is emitted by the shutdown restart thread"""

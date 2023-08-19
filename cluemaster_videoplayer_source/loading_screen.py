@@ -4,6 +4,7 @@ import requests
 import json
 import simplejson
 import shutil
+import main
 from apis import *
 from settings import *
 from requests.structures import CaseInsensitiveDict
@@ -490,7 +491,7 @@ class LoadingScreen(QWidget):
         self.local_ipv4_address.setAlignment(Qt.AlignHCenter)
         self.local_ipv4_address.setFont(QFont("IBM Plex Mono", 20))
         self.local_ipv4_address.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
-        self.local_ipv4_address.setText("Local IP : " + fetch_device_ipv4_address())
+        self.local_ipv4_address.setText(f"Local IP : {main.ipv4}") #fetch_device_ipv4_address())
         self.local_ipv4_address.show()
 
         stylesheet = """QProgressBar{background-color: transparent; border: 3px solid #4e71cf; border-radius: 5px;}
@@ -582,18 +583,3 @@ class LoadingScreen(QWidget):
 
         else:
             pass
-
-
-def fetch_device_ipv4_address():
-    ip_address = None
-    i_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    try:
-        i_socket.connect(('10.255.255.255', 1))
-        ip_address = i_socket.getsockname()[0]
-    except socket.error:
-        ip_address = "127.0.0.1"
-    finally:
-        i_socket.close()
-        print(">>> auto_startup - Device IP Address: " + ip_address)
-    return ip_address
