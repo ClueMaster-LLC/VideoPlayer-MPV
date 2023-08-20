@@ -1,33 +1,32 @@
-name: cluemaster-mediadisplay-core 
+name: cluemaster-videoplayer-core 
 base: core22
-version: '2023.03.31'
-summary: Clumaster.io Media Display for Escape Rooms 
+version: '2023.08.20'
+summary: Clumaster.io Video Player for Escape Rooms 
 description: |
-  ClueMaster Media Display is a Dynamic TV Display software for escape rooms.
-  It shows escape room countdown timers, visual text messages, video, audio,
-  and photo clues.
+  ClueMaster Video Player is a looping video TV Display software for escape rooms.
+  Media files are downloaded automatically from the cloud account and auto played in a loop.
 grade: stable 
 confinement: strict 
 
 apps:
-  cluemaster-mediadisplay-core:
+  cluemaster-videoplayer-core:
     command-chain: &_command-chain
       - bin/prepare-launch
       - bin/wayland-launch
       - bin/graphics-core22-wrapper
-    command: &_command cluemaster_display
+    #command: &_command cluemaster_videoplayer
     environment: &_environment
       QT_QPA_PLATFORM: wayland
       QT_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/
       QT_QPA_PLATFORM_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/platforms/
 
-  dameon:
-    daemon: simple
-    restart-condition: always
-    restart-delay: 3s
-    command-chain: *_command-chain
-    command: *_command
-    environment: *_environment
+    dameon:
+        daemon: simple
+        restart-condition: always
+        restart-delay: 3s
+        command-chain: *_command-chain
+        command: bin/python3 $SNAP/cluemaster_videoplayer_source/main.py
+        environment: *_environment
 
   pulseaudio:
     command: bin/pulseaudio
@@ -71,7 +70,8 @@ slots:
 parts:
   copy-source-code:
     plugin: dump
-    source: cluemaster_display/
+    #source: cluemaster_display/
+    source: .
     stage-packages:
       - ffmpeg
       - libass9
