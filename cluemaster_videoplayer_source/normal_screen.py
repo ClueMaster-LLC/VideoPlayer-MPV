@@ -426,7 +426,7 @@ class NormalWindow(QMainWindow):
         self.game_details_thread.deviceIDcorrupted.connect(self.force_authenticate_device)
         self.game_details_thread.apiStatus.connect(self.verify_status_of_game_details_api)
         self.game_details_thread.update_detected.connect(self.restart_device)
-        self.game_details_thread.statusUpdated.connect(self.verify_game_status)
+        # self.game_details_thread.statusUpdated.connect(self.verify_game_status)
         self.game_details_thread.custom_game_status.connect(self.complete_game_shutdown)
 
         self.download_files_request.start()
