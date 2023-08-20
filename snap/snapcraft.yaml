@@ -29,7 +29,7 @@ apps:
     restart-condition: always
     restart-delay: 3s
     command: bin/python3 $SNAP/cluemaster_videoplayer_source/main.py
-    environment: *_environment
+#    environment: *_environment
 
   pulseaudio:
     command: bin/pulseaudio
