@@ -5,7 +5,7 @@ summary: Clumaster.io Video Player for Escape Rooms
 description: |
   ClueMaster Video Player is a looping video TV Display software for escape rooms.
   Media files are downloaded automatically from the cloud account and auto played in a loop.
-grade: edge 
+grade: devel 
 confinement: devmode
 
 architectures:
