@@ -5,8 +5,8 @@ summary: Clumaster.io Video Player for Escape Rooms
 description: |
   ClueMaster Video Player is a looping video TV Display software for escape rooms.
   Media files are downloaded automatically from the cloud account and auto played in a loop.
-grade: edge 
-confinement: devmode 
+grade: stable 
+confinement: strict 
 
 apps:
   cluemaster-videoplayer-core:
@@ -20,13 +20,13 @@ apps:
       QT_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/
       QT_QPA_PLATFORM_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/platforms/
 
-#    dameon:
-    daemon: simple
-    restart-condition: always
-    restart-delay: 3s
-    command-chain: *_command-chain
-    command: bin/python3 $SNAP/cluemaster_videoplayer_source/main.py
-    environment: *_environment
+    dameon:
+        daemon: simple
+        restart-condition: always
+        restart-delay: 3s
+        command-chain: *_command-chain
+        command: bin/python3 $SNAP/cluemaster_videoplayer_source/main.py
+        environment: *_environment
 
   pulseaudio:
     command: bin/pulseaudio
@@ -70,19 +70,8 @@ slots:
 parts:
   copy-source-code:
     plugin: dump
+    #source: cluemaster_display/
     source: .
-    organize:
-      "static/prepare-launch": "bin/"
-
-  room-controller:
-    plugin: python
-    source: .
-
-    python-packages:
-      - psutil
-      - signalrcore
-      - requests
-
     stage-packages:
       - ffmpeg
       - libass9
@@ -119,12 +108,8 @@ parts:
       - libglx0
       - fcitx-frontend-qt5
       - libpulse0
-      
-    organize:
-      usr/lib/*/samba/*: usr/lib/
 
     stage:
-      - -usr/lib/x86_64-linux-gnu/libc_malloc_debug.so
       - -usr/share/alsa/alsa.conf
 
   extras:
