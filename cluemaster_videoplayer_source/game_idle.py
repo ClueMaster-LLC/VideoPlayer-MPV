@@ -1,4 +1,6 @@
 import sys
+import time
+
 import mpv
 import simplejson.errors
 from PyQt5.QtCore import *
@@ -153,7 +155,6 @@ class GameIdle(QMainWindow):
                 print(f'game_idle - Error Accessing USB: {usberror}')
 
             # if there are files then play them.
-            print(f'The video folder is not empty')
 
             if len(self.media_folder) != 0:
             # if self.no_media_files is False:
@@ -164,7 +165,7 @@ class GameIdle(QMainWindow):
                 # self.video_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
                 self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
-                print(f'{self.media_assets_location}')
+                # print(f'{self.media_assets_location}')
 
                 if self.media_assets_location.endswith(".mp4") or self.media_assets_location.endswith(".mkv") or \
                         self.media_assets_location.endswith(".mpg") or self.media_assets_location.endswith(".mpeg") or \
@@ -175,7 +176,7 @@ class GameIdle(QMainWindow):
                     self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.media_assets_location)
                     self.external_master_mpv_players.setParent(self)
                     self.external_master_mpv_players.showFullScreen()
-                    self.external_master_mpv_players.loop = True
+                    # self.external_master_mpv_players.loop = True
 
                 elif self.media_assets_location.endswith(".apng") or self.media_assets_location.endswith(".ajpg") or \
                         self.media_assets_location.endswith(".gif"):
@@ -195,11 +196,12 @@ class GameIdle(QMainWindow):
                     self.svg_widget.show()
 
                 else:
-                    print(f"game_idle = No videos or Pictures Found")
-                    self.master_background.setPixmap(QPixmap(self.media_assets_location).scaled(self.screen_width, self.screen_height))
-                    self.setCentralWidget(self.master_background)
-                # else:
-                #     self.setStyleSheet("background-color:#191F26;")
+                    try:
+                        self.master_background.setPixmap(QPixmap(self.media_assets_location).scaled(self.screen_width, self.screen_height))
+                        self.setCentralWidget(self.master_background)
+                    except Exception as error:
+                        print(f'game_idle - Error: {error}')
+
             else:
                 print(f"game_idle - No videos found in folder. Nothing to play.")
                 self.setStyleSheet("background-color:#191F26;")

@@ -420,14 +420,14 @@ class NormalWindow(QMainWindow):
         """ this method stops the timer started in the frontend method, and then starts the master thread i.e the
             game details api"""
 
-        # self.start_threads_timer.stop()
+        self.start_threads_timer.stop()
 
-        # self.game_details_thread.start()
-        # self.game_details_thread.deviceIDcorrupted.connect(self.force_authenticate_device)
-        # self.game_details_thread.apiStatus.connect(self.verify_status_of_game_details_api)
-        # self.game_details_thread.update_detected.connect(self.restart_device)
-        # self.game_details_thread.statusUpdated.connect(self.verify_game_status)
-        # self.game_details_thread.custom_game_status.connect(self.complete_game_shutdown)
+        self.game_details_thread.start()
+        self.game_details_thread.deviceIDcorrupted.connect(self.force_authenticate_device)
+        self.game_details_thread.apiStatus.connect(self.verify_status_of_game_details_api)
+        self.game_details_thread.update_detected.connect(self.restart_device)
+        self.game_details_thread.statusUpdated.connect(self.verify_game_status)
+        self.game_details_thread.custom_game_status.connect(self.complete_game_shutdown)
 
         self.download_files_request.start()
         self.download_files_request.downloadFiles.connect(self.download_files)
@@ -437,9 +437,11 @@ class NormalWindow(QMainWindow):
         """ this method is triggered as soon as the application receives the request to download new or updated files"""
 
         if self.external_game_idle_window.mpv_player_triggered:
+            print(f"MPV is triggered - Trying to terminate mpv player")
             self.external_game_idle_window.external_master_mpv_players.master_animated_image_player.terminate()
             self.external_game_idle_window.external_master_mpv_players.close()
         else:
+            print(f"MPV is NOT triggered")
             pass
 
         self.external_game_idle_window.stop_threads()
