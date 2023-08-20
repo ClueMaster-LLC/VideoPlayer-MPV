@@ -6,7 +6,11 @@ description: |
   ClueMaster Video Player is a looping video TV Display software for escape rooms.
   Media files are downloaded automatically from the cloud account and auto played in a loop.
 grade: edge 
-confinement: devmode 
+confinement: devmode
+
+architectures:
+  - build-on: amd64
+    build-for: amd64
 
 apps:
   cluemaster-videoplayer-core:
@@ -24,7 +28,6 @@ apps:
     daemon: simple
     restart-condition: always
     restart-delay: 3s
-    command-chain: *_command-chain
     command: bin/python3 $SNAP/cluemaster_videoplayer_source/main.py
     environment: *_environment
 
