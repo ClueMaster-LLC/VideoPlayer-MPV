@@ -5,6 +5,7 @@ import json
 import simplejson
 import shutil
 import main
+
 from apis import *
 from settings import *
 from requests.structures import CaseInsensitiveDict
@@ -60,14 +61,14 @@ class LoadingBackend(QThread):
                     # checking responses of room info api, if response is not No Configurations Files Found, then
                     # move forward and validate every media files and check for updated or new files
 
-                    main_folder = "assets/room data"
-                    main_room_data_directory = os.path.join(MASTER_DIRECTORY, main_folder)
-                    room_data_music_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "music")
-                    room_data_picture_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "picture")
-                    room_data_video_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "video")
-                    room_data_intro_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "intro media")
-                    room_data_fail_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "fail end media")
-                    room_data_success_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "success end media")
+                    # main_folder = "assets/room data"
+                    # main_room_data_directory = os.path.join(MASTER_DIRECTORY, main_folder)
+                    # room_data_music_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "music")
+                    # room_data_picture_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "picture")
+                    # room_data_video_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "video")
+                    # room_data_intro_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "intro media")
+                    # room_data_fail_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "fail end media")
+                    # room_data_success_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "success end media")
                     main_clue_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "clue medias")
 
                     response_of_room_info_api = requests.get(room_info_api_url, headers=headers)
@@ -78,221 +79,221 @@ class LoadingBackend(QThread):
                         {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"]) + 6})
                     time.sleep(2)
 
-                    music_file_url = response_of_room_info_api.json()["MusicPath"]
-                    picture_file_url = response_of_room_info_api.json()["PhotoPath"]
-                    video_file_url = response_of_room_info_api.json()["VideoPath"]
-                    intro_video_file_url = response_of_room_info_api.json()["IntroVideoPath"]
-                    end_success_file_url = response_of_room_info_api.json()["SuccessVideoPath"]
-                    end_fail_file_url = response_of_room_info_api.json()["FailVideoPath"]
+                    # music_file_url = response_of_room_info_api.json()["MusicPath"]
+                    # picture_file_url = response_of_room_info_api.json()["PhotoPath"]
+                    # video_file_url = response_of_room_info_api.json()["VideoPath"]
+                    # intro_video_file_url = response_of_room_info_api.json()["IntroVideoPath"]
+                    # end_success_file_url = response_of_room_info_api.json()["SuccessVideoPath"]
+                    # end_fail_file_url = response_of_room_info_api.json()["FailVideoPath"]
 
                     # emit downloading media slot
                     self.downloading_media.emit()
                     time.sleep(2)
 
-                    if os.path.isdir(main_room_data_directory) is False:
-                        os.mkdir(main_room_data_directory)
+                    # if os.path.isdir(main_room_data_directory) is False:
+                    #     os.mkdir(main_room_data_directory)
 
                     if os.path.isdir(main_clue_media_file_directory) is False:
                         shutil.rmtree(main_clue_media_file_directory, ignore_errors=True)
                         os.mkdir(main_clue_media_file_directory)
 
-                    if os.path.isdir(room_data_music_subfolder) is False:
-                        os.mkdir(room_data_music_subfolder)
-
-                    if os.path.isdir(room_data_picture_subfolder) is False:
-                        os.mkdir(room_data_picture_subfolder)
-
-                    if os.path.isdir(room_data_video_subfolder) is False:
-                        os.mkdir(room_data_video_subfolder)
-
-                    if os.path.isdir(room_data_intro_media_subfolder) is False:
-                        os.mkdir(room_data_intro_media_subfolder)
-
-                    if os.path.isdir(room_data_success_end_media_subfolder) is False:
-                        os.mkdir(room_data_success_end_media_subfolder)
-
-                    if os.path.isdir(room_data_fail_end_media_subfolder) is False:
-                        os.mkdir(room_data_fail_end_media_subfolder)
+                    # if os.path.isdir(room_data_music_subfolder) is False:
+                    #     os.mkdir(room_data_music_subfolder)
+                    #
+                    # if os.path.isdir(room_data_picture_subfolder) is False:
+                    #     os.mkdir(room_data_picture_subfolder)
+                    #
+                    # if os.path.isdir(room_data_video_subfolder) is False:
+                    #     os.mkdir(room_data_video_subfolder)
+                    #
+                    # if os.path.isdir(room_data_intro_media_subfolder) is False:
+                    #     os.mkdir(room_data_intro_media_subfolder)
+                    #
+                    # if os.path.isdir(room_data_success_end_media_subfolder) is False:
+                    #     os.mkdir(room_data_success_end_media_subfolder)
+                    #
+                    # if os.path.isdir(room_data_fail_end_media_subfolder) is False:
+                    #     os.mkdir(room_data_fail_end_media_subfolder)
 
                     # music directory
-                    try:
-                        if music_file_url is not None:
-                            file_name = music_file_url.split("/")[5].partition("?X")[0]
-                            file_location = os.path.join(room_data_music_subfolder, file_name)
-
-                            if os.path.isfile(file_location) is False:
-                                shutil.rmtree(room_data_music_subfolder, ignore_errors=True)
-                                os.mkdir(room_data_music_subfolder)
-
-                                file_bytes = requests.get(music_file_url, headers=headers)
-                                file_bytes.raise_for_status()
-                                with open(os.path.join(room_data_music_subfolder, file_name), "wb") as file:
-                                    file.write(file_bytes.content)
-
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-                            else:
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-
-                    except IndexError:
-                        pass
-
-                    except requests.exceptions.HTTPError as request_error:
-                        if "401 Client Error" in str(request_error):
-                            self.check_api_token_status()
-                        else:
-                            print(">> Console output - Not a 401 error")
-
-                    # picture directory
-                    try:
-                        if picture_file_url is not None:
-                            file_name = picture_file_url.split("/")[5].partition("?X")[0]
-                            file_location = os.path.join(room_data_picture_subfolder, file_name)
-
-                            if os.path.isfile(file_location) is False:
-                                shutil.rmtree(room_data_picture_subfolder, ignore_errors=True)
-                                os.mkdir(room_data_picture_subfolder)
-
-                                file_bytes = requests.get(picture_file_url, headers=headers)
-                                file_bytes.raise_for_status()
-                                with open(os.path.join(room_data_picture_subfolder, file_name), "wb") as file:
-                                    file.write(file_bytes.content)
-
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-                            else:
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-
-                    except IndexError:
-                        pass
-
-                    except requests.exceptions.HTTPError as request_error:
-                        if "401 Client Error" in str(request_error):
-                            self.check_api_token_status()
-                        else:
-                            print(">> Console output - Not a 401 error")
-
-                    # video directory
-                    try:
-                        if video_file_url is not None:
-                            file_name = video_file_url.split("/")[5].partition("?X")[0]
-                            file_location = os.path.join(room_data_video_subfolder, file_name)
-
-                            if os.path.isfile(file_location) is False:
-                                shutil.rmtree(room_data_video_subfolder, ignore_errors=True)
-                                os.mkdir(room_data_video_subfolder)
-
-                                file_bytes = requests.get(video_file_url, headers=headers)
-                                file_bytes.raise_for_status()
-                                with open(os.path.join(room_data_video_subfolder, file_name), "wb") as file:
-                                    file.write(file_bytes.content)
-
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-                            else:
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-
-                    except IndexError:
-                        pass
-
-                    except requests.exceptions.HTTPError as request_error:
-                        if "401 Client Error" in str(request_error):
-                            self.check_api_token_status()
-                        else:
-                            print(">> Console output - Not a 401 error")
-
-                    # intro media directory
-                    try:
-                        if intro_video_file_url is not None:
-                            file_name = intro_video_file_url.split("/")[5].partition("?X")[0]
-                            file_location = os.path.join(room_data_intro_media_subfolder, file_name)
-
-                            if os.path.isfile(file_location) is False:
-                                shutil.rmtree(room_data_intro_media_subfolder, ignore_errors=True)
-                                os.mkdir(room_data_intro_media_subfolder)
-
-                                file_bytes = requests.get(intro_video_file_url, headers=headers)
-                                file_bytes.raise_for_status()
-                                with open(os.path.join(room_data_intro_media_subfolder, file_name), "wb") as file:
-                                    file.write(file_bytes.content)
-
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-                            else:
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-
-                    except IndexError:
-                        pass
-
-                    except requests.exceptions.HTTPError as request_error:
-                        if "401 Client Error" in str(request_error):
-                            self.check_api_token_status()
-                        else:
-                            print(">> Console output - Not a 401 error")
-
-                    # end media directory
-                    try:
-                        if end_success_file_url is not None:
-                            file_name = end_success_file_url.split("/")[5].partition("?X")[0]
-                            file_location = os.path.join(room_data_success_end_media_subfolder, file_name)
-
-                            if os.path.isfile(file_location) is False:
-                                shutil.rmtree(room_data_success_end_media_subfolder, ignore_errors=True)
-                                os.mkdir(room_data_success_end_media_subfolder)
-
-                                file_bytes = requests.get(end_success_file_url, headers=headers)
-                                file_bytes.raise_for_status()
-                                with open(os.path.join(room_data_success_end_media_subfolder, file_name), "wb") as file:
-                                    file.write(file_bytes.content)
-
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-                            else:
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-
-                    except IndexError:
-                        pass
-
-                    except requests.exceptions.HTTPError as request_error:
-                        if "401 Client Error" in str(request_error):
-                            self.check_api_token_status()
-                        else:
-                            print(">> Console output - Not a 401 error")
-
-                    # end media directory
-                    try:
-                        if end_fail_file_url is not None:
-                            file_name = end_fail_file_url.split("/")[5].partition("?X")[0]
-                            file_location = os.path.join(room_data_fail_end_media_subfolder, file_name)
-
-                            if os.path.isfile(file_location) is False:
-                                shutil.rmtree(room_data_fail_end_media_subfolder, ignore_errors=True)
-                                os.mkdir(room_data_fail_end_media_subfolder)
-
-                                file_bytes = requests.get(end_fail_file_url, headers=headers)
-                                file_bytes.raise_for_status()
-                                with open(os.path.join(room_data_fail_end_media_subfolder, file_name), "wb") as file:
-                                    file.write(file_bytes.content)
-
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-                            else:
-                                # emit file downloaded signal
-                                self.media_file_downloaded.emit()
-
-                    except IndexError:
-                        pass
-
-                    except requests.exceptions.HTTPError as request_error:
-                        if "401 Client Error" in str(request_error):
-                            self.check_api_token_status()
-                        else:
-                            print(">> Console output - Not a 401 error")
+                    # try:
+                    #     if music_file_url is not None:
+                    #         file_name = music_file_url.split("/")[5].partition("?X")[0]
+                    #         file_location = os.path.join(room_data_music_subfolder, file_name)
+                    #
+                    #         if os.path.isfile(file_location) is False:
+                    #             shutil.rmtree(room_data_music_subfolder, ignore_errors=True)
+                    #             os.mkdir(room_data_music_subfolder)
+                    #
+                    #             file_bytes = requests.get(music_file_url, headers=headers)
+                    #             file_bytes.raise_for_status()
+                    #             with open(os.path.join(room_data_music_subfolder, file_name), "wb") as file:
+                    #                 file.write(file_bytes.content)
+                    #
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #         else:
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #
+                    # except IndexError:
+                    #     pass
+                    #
+                    # except requests.exceptions.HTTPError as request_error:
+                    #     if "401 Client Error" in str(request_error):
+                    #         self.check_api_token_status()
+                    #     else:
+                    #         print(">> Console output - Not a 401 error")
+                    #
+                    # # picture directory
+                    # try:
+                    #     if picture_file_url is not None:
+                    #         file_name = picture_file_url.split("/")[5].partition("?X")[0]
+                    #         file_location = os.path.join(room_data_picture_subfolder, file_name)
+                    #
+                    #         if os.path.isfile(file_location) is False:
+                    #             shutil.rmtree(room_data_picture_subfolder, ignore_errors=True)
+                    #             os.mkdir(room_data_picture_subfolder)
+                    #
+                    #             file_bytes = requests.get(picture_file_url, headers=headers)
+                    #             file_bytes.raise_for_status()
+                    #             with open(os.path.join(room_data_picture_subfolder, file_name), "wb") as file:
+                    #                 file.write(file_bytes.content)
+                    #
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #         else:
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #
+                    # except IndexError:
+                    #     pass
+                    #
+                    # except requests.exceptions.HTTPError as request_error:
+                    #     if "401 Client Error" in str(request_error):
+                    #         self.check_api_token_status()
+                    #     else:
+                    #         print(">> Console output - Not a 401 error")
+                    #
+                    # # video directory
+                    # try:
+                    #     if video_file_url is not None:
+                    #         file_name = video_file_url.split("/")[5].partition("?X")[0]
+                    #         file_location = os.path.join(room_data_video_subfolder, file_name)
+                    #
+                    #         if os.path.isfile(file_location) is False:
+                    #             shutil.rmtree(room_data_video_subfolder, ignore_errors=True)
+                    #             os.mkdir(room_data_video_subfolder)
+                    #
+                    #             file_bytes = requests.get(video_file_url, headers=headers)
+                    #             file_bytes.raise_for_status()
+                    #             with open(os.path.join(room_data_video_subfolder, file_name), "wb") as file:
+                    #                 file.write(file_bytes.content)
+                    #
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #         else:
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #
+                    # except IndexError:
+                    #     pass
+                    #
+                    # except requests.exceptions.HTTPError as request_error:
+                    #     if "401 Client Error" in str(request_error):
+                    #         self.check_api_token_status()
+                    #     else:
+                    #         print(">> Console output - Not a 401 error")
+                    #
+                    # # intro media directory
+                    # try:
+                    #     if intro_video_file_url is not None:
+                    #         file_name = intro_video_file_url.split("/")[5].partition("?X")[0]
+                    #         file_location = os.path.join(room_data_intro_media_subfolder, file_name)
+                    #
+                    #         if os.path.isfile(file_location) is False:
+                    #             shutil.rmtree(room_data_intro_media_subfolder, ignore_errors=True)
+                    #             os.mkdir(room_data_intro_media_subfolder)
+                    #
+                    #             file_bytes = requests.get(intro_video_file_url, headers=headers)
+                    #             file_bytes.raise_for_status()
+                    #             with open(os.path.join(room_data_intro_media_subfolder, file_name), "wb") as file:
+                    #                 file.write(file_bytes.content)
+                    #
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #         else:
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #
+                    # except IndexError:
+                    #     pass
+                    #
+                    # except requests.exceptions.HTTPError as request_error:
+                    #     if "401 Client Error" in str(request_error):
+                    #         self.check_api_token_status()
+                    #     else:
+                    #         print(">> Console output - Not a 401 error")
+                    #
+                    # # end media directory
+                    # try:
+                    #     if end_success_file_url is not None:
+                    #         file_name = end_success_file_url.split("/")[5].partition("?X")[0]
+                    #         file_location = os.path.join(room_data_success_end_media_subfolder, file_name)
+                    #
+                    #         if os.path.isfile(file_location) is False:
+                    #             shutil.rmtree(room_data_success_end_media_subfolder, ignore_errors=True)
+                    #             os.mkdir(room_data_success_end_media_subfolder)
+                    #
+                    #             file_bytes = requests.get(end_success_file_url, headers=headers)
+                    #             file_bytes.raise_for_status()
+                    #             with open(os.path.join(room_data_success_end_media_subfolder, file_name), "wb") as file:
+                    #                 file.write(file_bytes.content)
+                    #
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #         else:
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #
+                    # except IndexError:
+                    #     pass
+                    #
+                    # except requests.exceptions.HTTPError as request_error:
+                    #     if "401 Client Error" in str(request_error):
+                    #         self.check_api_token_status()
+                    #     else:
+                    #         print(">> Console output - Not a 401 error")
+                    #
+                    # # end media directory
+                    # try:
+                    #     if end_fail_file_url is not None:
+                    #         file_name = end_fail_file_url.split("/")[5].partition("?X")[0]
+                    #         file_location = os.path.join(room_data_fail_end_media_subfolder, file_name)
+                    #
+                    #         if os.path.isfile(file_location) is False:
+                    #             shutil.rmtree(room_data_fail_end_media_subfolder, ignore_errors=True)
+                    #             os.mkdir(room_data_fail_end_media_subfolder)
+                    #
+                    #             file_bytes = requests.get(end_fail_file_url, headers=headers)
+                    #             file_bytes.raise_for_status()
+                    #             with open(os.path.join(room_data_fail_end_media_subfolder, file_name), "wb") as file:
+                    #                 file.write(file_bytes.content)
+                    #
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #         else:
+                    #             # emit file downloaded signal
+                    #             self.media_file_downloaded.emit()
+                    #
+                    # except IndexError:
+                    #     pass
+                    #
+                    # except requests.exceptions.HTTPError as request_error:
+                    #     if "401 Client Error" in str(request_error):
+                    #         self.check_api_token_status()
+                    #     else:
+                    #         print(">> Console output - Not a 401 error")
 
                     # downloading clue medias
                     index = 0

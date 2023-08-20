@@ -130,78 +130,47 @@ class GameIdle(QMainWindow):
                 initial_dictionary = json.load(configurations_json_file)
 
             room_info_response = initial_dictionary
-            self.media_folder = os.path.join(MASTER_DIRECTORY, "assets/clue medias")
+            if self.no_media_files is False:
 
-            # Let's try to access a usb drive and play videos inserted as well
-            try:
-                import re
-                import subprocess
-                device_re = re.compile(
-                    b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-                df = subprocess.check_output("lsusb")
-                devices = []
-                for i in df.split(b'\n'):
-                    if i:
-                        info = device_re.match(i)
-                        if info:
-                            dinfo = info.groupdict()
-                            dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
-                            devices.append(dinfo)
-
-                print(devices)
-            except Exception as usberror:
-                print(f'game_idle - Error Accessing USB: {usberror}')
-
-            # if there are files then play them.
-            print(f'The video folder is not empty')
-
-            if len(self.media_folder) != 0:
-            # if self.no_media_files is False:
-
-                # if room_info_response["IsPhoto"] is True:
+                if room_info_response["IsPhoto"] is True:
                     # checking if photo is enabled in the webapp
-                # self.picture_location = os.path.join(MASTER_DIRECTORY, "assets/room data/picture/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/picture/"))[0]))
-                # self.video_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
-                # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
-                self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
-                print(f'{self.media_assets_location}')
+                    self.picture_location = os.path.join(MASTER_DIRECTORY, "assets/room data/picture/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/picture/"))[0]))
+                    self.video_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
 
-                if self.media_assets_location.endswith(".mp4") or self.media_assets_location.endswith(".mkv") or \
-                        self.media_assets_location.endswith(".mpg") or self.media_assets_location.endswith(".mpeg") or \
-                        self.media_assets_location.endswith(".m4v"):
+                    if self.video_location.endswith(".mp4") or self.video_location.endswith(".mkv") or \
+                            self.video_location.endswith(".mpg") or self.video_location.endswith(".mpeg") or \
+                            self.video_location.endswith(".m4v"):
 
-                    print(f"game_idle = MP4 Background Video Found")
-                    self.mpv_player_triggered = True
-                    self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.media_assets_location)
-                    self.external_master_mpv_players.setParent(self)
-                    self.external_master_mpv_players.showFullScreen()
-                    self.external_master_mpv_players.loop = True
+                        print(f"game_idle = MP4 Background Video Found")
+                        self.mpv_player_triggered = True
+                        self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.video_location)
+                        self.external_master_mpv_players.setParent(self)
+                        self.external_master_mpv_players.showFullScreen()
+                        self.external_master_mpv_players.loop = True
 
-                elif self.media_assets_location.endswith(".apng") or self.media_assets_location.endswith(".ajpg") or \
-                        self.media_assets_location.endswith(".gif"):
+                    elif self.picture_location.endswith(".apng") or self.picture_location.endswith(".ajpg") or \
+                            self.picture_location.endswith(".gif"):
 
-                    print(f"game_idle = Photo Background Found")
-                    self.mpv_player_triggered = True
-                    self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.media_assets_location)
-                    self.external_master_mpv_players.setParent(self)
-                    self.external_master_mpv_players.show()
+                        print(f"game_idle = Photo Background Found")
+                        self.mpv_player_triggered = True
+                        self.external_master_mpv_players = GameIdleMPVPlayer(file_name=self.picture_location)
+                        self.external_master_mpv_players.setParent(self)
+                        self.external_master_mpv_players.show()
 
-                elif self.media_assets_location.endswith(".svg"):
+                    elif self.picture_location.endswith(".svg"):
 
-                    print(f"game_idle = SVG Animated Background Found")
-                    self.svg_widget = QSvgWidget(self.media_assets_location)
-                    self.svg_widget.resize(self.screen_width, self.screen_height)
-                    self.svg_widget.setParent(self)
-                    self.svg_widget.show()
+                        print(f"game_idle = SVG Animated Background Found")
+                        self.svg_widget = QSvgWidget(self.picture_location)
+                        self.svg_widget.resize(self.screen_width, self.screen_height)
+                        self.svg_widget.setParent(self)
+                        self.svg_widget.show()
 
+                    else:
+                        self.master_background.setPixmap(QPixmap(self.picture_location).scaled(self.screen_width, self.screen_height))
+                        self.setCentralWidget(self.master_background)
                 else:
-                    print(f"game_idle = No videos or Pictures Found")
-                    self.master_background.setPixmap(QPixmap(self.media_assets_location).scaled(self.screen_width, self.screen_height))
-                    self.setCentralWidget(self.master_background)
-                # else:
-                #     self.setStyleSheet("background-color:#191F26;")
+                    self.setStyleSheet("background-color:#191F26;")
             else:
-                print(f"game_idle - No videos found in folder. Nothing to play.")
                 self.setStyleSheet("background-color:#191F26;")
 
         except json.decoder.JSONDecodeError:
