@@ -1,0 +1,18 @@
+#!/bin/sh
+
+echo "Prepairing launch ..."
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib"
+export PULSE_RUNTIME_PATH="/var/run/pulse"
+export PULSE_STATE_PATH="$SNAP_COMMON/state"
+export ALSA_CONFIG_UCM="$SNAP/usr/share/alsa/ucm2"
+export ALSA_CONFIG_TPLG="$SNAP/usr/share/alsa/topology"
+export ALSA_CONFIG_PATH="$SNAP/usr/share/alsa/alsa.conf"
+export ALSA_MIXER_SIMPLE="$SNAP/usr/share/alsa/smixer.conf"
+export ALSA_PLUGIN_DIR="$SNAP/usr/lib/alsa-lib"
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/:$SNAP/usr/lib/x86_64-linux-gnu/samba/:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio/:$SNAP/usr/lib/x86_64-linux-gnu/dri/:$SNAP/usr/lib/x86_64-linux-gnu/vdpau/:$SNAP/usr/lib/x86_64-linux-gnu/alsa/:$SNAP/"
+export PYTHONPATH="$SNAP/usr/lib/python3/dist-packages"
+echo "Environment variables setup complete ..."
+
+exec "$@"
