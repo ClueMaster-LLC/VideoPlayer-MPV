@@ -1,32 +1,22 @@
-name: cluemaster-videoplayer-core 
-base: core22
-version: '2023.03.31'
-summary: Clumaster.io Media Display for Escape Rooms 
+name: cluemaster-videoplayer-core
+base: core20 
+version: '2023.08.24'
+summary: Clumaster.io Video Player for Escape Rooms 
 description: |
-    ClueMaster Video Player looping TV Display software for escape rooms.
-    It downloads media files to loop for ambinent displays.
+  ClueMaster Video Player is a Dynamic TV Display software for escape rooms.
+  It loops through videos and playes them. To be used in small kiosk devices.
 grade: stable 
 confinement: strict 
 
 apps:
-  cluemaster-videoplayer-core:
-    command-chain: &_command-chain
-      - bin/prepare-launch
-      - bin/wayland-launch
-      - bin/graphics-core22-wrapper
-    command: &_command cluemaster_videoplayer/
-    environment: &_environment
-      QT_QPA_PLATFORM: wayland
-      QT_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/
-      QT_QPA_PLATFORM_PLUGIN_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET}/qt5/plugins/platforms/
-
-  dameon:
+  cluemaster-mediadisplay-core:
     daemon: simple
     restart-condition: always
-    restart-delay: 3s
-    command-chain: *_command-chain
-    command: *_command
-    environment: *_environment
+    command-chain:
+      - env-setup
+    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/cluemaster_videoplayer
+    environment:
+      DISABLE_WAYLAND: 1
 
   pulseaudio:
     command: bin/pulseaudio
@@ -54,21 +44,18 @@ plugs:
     interface: audio-playback
   wayland:
   network:
+  opengl:
   network-bind:
   shutdown:
-  opengl:
   hardware-observe:
   alsa:
-  graphics-core22:
-    interface: content
-    target: $SNAP/graphics
-    default-provider: mesa-core22
 
 slots:
   audio-playback:
 
 parts:
   copy-source-code:
+    after: [desktop-qt5]
     plugin: dump
     source: cluemaster_videoplayer/
     stage-packages:
@@ -93,7 +80,60 @@ parts:
       - libgl1-mesa-dri
       - python3-pyqt5.qtmultimedia
       - libqt5multimedia5-plugins
+
+    stage:
+      - -usr/share/alsa/alsa.conf
+      - -usr/share/alsa/cards/HDA-Intel.conf
+      - -usr/share/alsa/cards/USB-Audio.conf
+      - -usr/share/alsa/cards/aliases.conf
+      - -usr/share/alsa/pcm/center_lfe.conf
+      - -usr/share/alsa/pcm/default.conf
+      - -usr/share/alsa/pcm/dmix.conf
+      - -usr/share/alsa/pcm/dsnoop.conf
+      - -usr/share/alsa/pcm/front.conf
+      - -usr/share/alsa/pcm/hdmi.conf
+      - -usr/share/alsa/pcm/iec958.conf
+      - -usr/share/alsa/pcm/modem.conf
+      - -usr/share/alsa/pcm/rear.conf
+      - -usr/share/alsa/pcm/side.conf
+      - -usr/share/alsa/pcm/surround21.conf
+      - -usr/share/alsa/pcm/surround40.conf
+      - -usr/share/alsa/pcm/surround41.conf
+      - -usr/share/alsa/pcm/surround50.conf
+      - -usr/share/alsa/pcm/surround51.conf
+      - -usr/share/alsa/pcm/surround71.conf
+      - -README.md
+
+
+    stage-snaps: [mir-kiosk-x11]
+
+  extras:
+    plugin: dump
+    source: static/
+    organize:
+      "prepare-launch": "bin/"
+
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
       - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 
+      - try: [appmenu-qt5]
       - locales-all
       - xdg-user-dirs
       - libdrm2
@@ -106,16 +146,6 @@ parts:
       - libglvnd0
       - libglx0
       - fcitx-frontend-qt5
-      - libpulse0
-
-    stage:
-      - -usr/share/alsa/alsa.conf
-
-  extras:
-    plugin: dump
-    source: static/
-    organize:
-      "prepare-launch": "bin/"
 
   pulseaudio-common:
     source: bin
@@ -138,7 +168,7 @@ parts:
     source: https://github.com/pulseaudio/pulseaudio.git
     source-tag: v15.0
     source-depth: 1
-    after: [ alsa-lib]
+    after: [ alsa-lib ]
     build-packages:
       - check
       - doxygen
@@ -157,7 +187,6 @@ parts:
       - libsbc-dev
       - libsnapd-glib-dev
       - libsoxr-dev
-      - meson
     stage-packages:
       - libapparmor1
       - libasyncns0
@@ -165,7 +194,7 @@ parts:
       - libflac8
       - libglib2.0-0
       - libgomp1
-      - libjson-c5
+      - libjson-c4
       - libltdl7
       - libogg0
       - libsbc1
@@ -179,27 +208,32 @@ parts:
       - libvorbis0a
       - libvorbisenc2
     meson-parameters:
-      - --prefix=/usr
+      - --prefix="/usr"
       - --sysconfdir=/etc
       - --libexec=/usr/lib
       - --libdir=/usr/lib
       - --localstatedir=/var
-      - -Dgstreamer=disabled
-      - -Dbluez5-gstreamer=disabled
-      - -Dorc=disabled
-      - -Dgsettings=disabled
-      - -Dadrian-aec=false
-      - -Dgtk=disabled
-      - -Dhal-compat=false
-      - -Dwebrtc-aec=disabled
-      - -Doss-output=disabled
-      - -Djack=disabled
-      - -Dx11=disabled
-      - -Dsystem_user=root
-      - -Dsystem_group=root
-      - -Daccess_group=root
+      - -Dgstreamer="disabled"
+      - -Dbluez5-gstreamer="disabled"
+      - -Dorc="disabled"
+      - -Dgsettings="disabled"
+      - -Dadrian-aec="false"
+      - -Dgtk="disabled"
+      - -Dhal-compat="false"
+      - -Dwebrtc-aec="disabled"
+      - -Doss-output="disabled"
+      - -Djack="disabled"
+      - -Dx11="disabled"
+      - -Dsystem_user="root"
+      - -Dsystem_group="root"
+      - -Daccess_group="root"
+    override-build: |
+      snapcraftctl build
+      VER=$(cd $SNAPCRAFT_PART_SRC; git tag|sed 's/^v//')
+      snapcraftctl set-version $VER
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
     override-prime: |
-      craftctl default
+      snapcraftctl prime
       find usr/share/doc/ -type f,l ! -name copyright | xargs rm -rf
     prime:
       - -usr/include
@@ -242,39 +276,11 @@ parts:
     organize:
       ucm: usr/share/alsa/ucm
       ucm2: usr/share/alsa/ucm2
-    stage:
+    prime:
       - -README.md
 
-  graphics-core22:
-    after:
-      - copy-source-code
-      - extras
-      - pulseaudio-common
-      - alsa-lib
-      - pulseaudio
-      - alsa-plugins
-      - alsa-ucm
-    source: https://github.com/MirServer/graphics-core22.git
-    plugin: dump
-    override-prime: |
-      craftctl default
-      ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22 nvidia-core22
-    prime:
-    - bin/graphics-core22-wrapper
-
-  wayland-launch:
-    plugin: dump
-    source: wayland-launch/
-    override-build: |
-      PLUGS="opengl wayland graphics-core22"
-      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/wayland-launch
-      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/setup.sh
-      snapcraftctl build
-    stage-packages:
-      - inotify-tools
-
 environment:
-  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib:$SNAP/graphics/lib"
+  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib"
   PULSE_RUNTIME_PATH: /var/run/pulse
   PULSE_STATE_PATH: $SNAP_COMMON/state
   ALSA_CONFIG_UCM: $SNAP/usr/share/alsa/ucm2
@@ -282,18 +288,11 @@ environment:
   ALSA_CONFIG_PATH: $SNAP/usr/share/alsa/alsa.conf
   ALSA_MIXER_SIMPLE: $SNAP/usr/share/alsa/smixer.conf
   ALSA_PLUGIN_DIR: $SNAP/usr/lib/alsa-lib
-  LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
-  LIBVA_DRIVERS_PATH: $SNAP/graphics/dri
-  __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
-  XDG_CACHE_HOME:  $SNAP_USER_COMMON/.cache
-  XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
-  XDG_CONFIG_DIRS: $SNAP/etc/xdg
-  XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
 
 
 layout:
-  # /usr/share/X11:
-  #   bind: $SNAP/usr/share/X11
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
   /usr/bin/xkbcomp:
     symlink: $SNAP/usr/bin/xkbcomp
   /usr/share/icons:
@@ -320,11 +319,4 @@ layout:
     symlink: $SNAP/usr/share/alsa
   /usr/share/applications:
     bind: $SNAP/usr/share/applications
-  /usr/share/drirc.d:
-    symlink: $SNAP_COMMON/graphics/usr/share/drirc.d
-  /usr/share/X11/XErrorDB:
-    bind: $SNAP/graphics/usr/share/X11/XErrorDB
-  /usr/share/X11/locale:
-    bind: $SNAP/graphics/usr/share/X11/locale
-  /usr/share/libdrm:
-    bind: $SNAP/graphics/libdrm
+
