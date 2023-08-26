@@ -102,7 +102,8 @@ class SplashBackend(QThread):
                 except requests.exceptions.ConnectionError:
                     # if api call is facing connection error, wait for 2 seconds and then retry
                     time.sleep(2)
-                    continue
+                    self.skip_authentication.emit(True)
+                    break
 
                 else:
                     break
