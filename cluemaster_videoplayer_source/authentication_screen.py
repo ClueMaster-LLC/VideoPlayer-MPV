@@ -58,8 +58,8 @@ class AuthenticationBackend(QThread):
                     # print("here")
                     # device_request_api.raise_for_status()  # raise error if status code of request is not 200
                     # print("raise_for_status_passed")
-                    if device_request_api.status_code != 200:
-                        print(f"Device Registration - Device Request API status code is {device_request_api.status_code}")
+                    if device_request_api.status_code == 401:
+                        print(f"authentication_screen - Device Not Registered - Device Request API status code is {device_request_api.status_code}")
                         time.sleep(3)
                         pass
 
