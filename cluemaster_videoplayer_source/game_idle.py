@@ -49,14 +49,16 @@ class GameIdleMPVPlayer(QWidget):
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
-                                                        input_vo_keyboard=True
+                                                        input_vo_keyboard=True,
+                                                        loop_playlist="inf"
                                                         )
         elif PLATFORM == "AMD":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
-                                                        input_vo_keyboard=True
+                                                        input_vo_keyboard=True,
+                                                        loop_playlist="inf"
                                                         )
         else:
             print("VM MPV Player")
@@ -88,10 +90,11 @@ class GameIdleMPVPlayer(QWidget):
                 print(">>> File appended to playlist - ", file)
                 self.master_animated_image_player.playlist_append(file)
 
-            print(self.master_animated_image_player.playlist_filenames)
                 # else:
                 #     print(f'game_idle - no video files found to load into playlist')
                 #     pass
+
+            print(self.master_animated_image_player.playlist_filenames)
 
             self.master_animated_image_player.playlist_pos = 0
 
