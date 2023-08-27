@@ -3,8 +3,11 @@
     <module name="cluemaster_videoplayer_source" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
     <option name="SDK_HOME" value="" />
-    <option name="SDK_NAME" value="Python 3.11 (virtualenv)" />
+    <option name="SDK_NAME" value="Python 3.10 (pycharm_virtual_e)" />
     <option name="WORKING_DIRECTORY" value="C:\Users\rbartram\Documents\GitHub\VideoPlayer-MPV\cluemaster_videoplayer_source" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />

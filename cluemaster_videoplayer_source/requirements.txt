@@ -1,4 +1,4 @@
-PyQt5
-requests
+PyQt5~=5.14.1
+requests~=2.22.0
 git+https://github.com/ClueMaster-LLC/python-mpv
-simplejson
+simplejson~=3.16.0

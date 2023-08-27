@@ -49,7 +49,8 @@ class GameIdleMPVPlayer(QWidget):
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
-                                                        input_vo_keyboard=True)
+                                                        input_vo_keyboard=True
+                                                        )
         elif PLATFORM == "AMD":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
@@ -62,7 +63,8 @@ class GameIdleMPVPlayer(QWidget):
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
-                                                        input_vo_keyboard=True
+                                                        input_vo_keyboard=True,
+                                                        loop_playlist="inf"
                                                         )
 
         # instance methods
@@ -79,16 +81,27 @@ class GameIdleMPVPlayer(QWidget):
         """ this method contains the codes for showing the video clue"""
 
         # adding file to mpv playlist
-        for file in self.playlist_files:
-            if file.endswith(".mp4") or file.endswith(".mkv") or file.endswith(".mpg") or file.endswith(".mpeg") or file.endswith(".m4v"):
+        try:
+            print(f'PlayList Files: {self.playlist_files}')
+            for file in self.playlist_files:
+                # if file.endswith(".mp4") or file.endswith(".mkv") or file.endswith(".mpg") or file.endswith(".mpeg") or file.endswith(".m4v"):
                 print(">>> File appended to playlist - ", file)
                 self.master_animated_image_player.playlist_append(file)
-            else:
-                pass
 
-        self.master_animated_image_player.playlist_pos = 0
-        while True:
-            self.master_animated_image_player.wait_for_playback()
+            print(self.master_animated_image_player.playlist_filenames)
+                # else:
+                #     print(f'game_idle - no video files found to load into playlist')
+                #     pass
+
+            self.master_animated_image_player.playlist_pos = 0
+
+            # self.master_animated_image_player.loop = True
+            self.master_animated_image_player.playlist_play_index(0)
+            # while True:
+            #     self.master_animated_image_player.wait_for_playback()
+
+        except Exception as error_playlist:
+            print(f'game_idle - Error Loading PlayList Files: {error_playlist}')
 
 
 class GameIdle(QMainWindow):
@@ -185,51 +198,21 @@ class GameIdle(QMainWindow):
                 # self.picture_location = os.path.join(MASTER_DIRECTORY, "assets/room data/picture/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/picture/"))[0]))
                 # self.video_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
+                # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
 
                 self.clue_medias = os.path.join(MASTER_DIRECTORY, "assets/clue medias/")
                 self.media_assets_location = [self.clue_medias + file for file in os.listdir(self.clue_medias)]
-                print(">>> Console output - Clue Files ", self.media_assets_location)
+                print(">>> Console output - Media Files ", self.media_assets_location)
 
-                self.mpv_player_triggered = True
-                self.external_master_mpv_players = GameIdleMPVPlayer(files=self.media_assets_location)
-                self.external_master_mpv_players.setParent(self)
-                self.external_master_mpv_players.showFullScreen()
-                self.external_master_mpv_players.show()
+                try:
+                    self.mpv_player_triggered = True
+                    self.external_master_mpv_players = GameIdleMPVPlayer(files=self.media_assets_location)
+                    self.external_master_mpv_players.setParent(self)
+                    self.external_master_mpv_players.showFullScreen()
+                    self.external_master_mpv_players.show()
 
-                # if self.media_assets_location.endswith(".mp4") or self.media_assets_location.endswith(".mkv") or \
-                #         self.media_assets_location.endswith(".mpg") or self.media_assets_location.endswith(".mpeg") or \
-                #         self.media_assets_location.endswith(".m4v"):
-                #
-                #     print(f"game_idle = MP4 Background Video Found")
-                #     self.mpv_player_triggered = True
-                #     self.external_master_mpv_players = GameIdleMPVPlayer(files=self.media_assets_location)
-                #     self.external_master_mpv_players.setParent(self)
-                #     self.external_master_mpv_players.showFullScreen()
-                #     # self.external_master_mpv_players.loop = True
-                #
-                # elif self.media_assets_location.endswith(".apng") or self.media_assets_location.endswith(".ajpg") or \
-                #         self.media_assets_location.endswith(".gif"):
-                #
-                #     print(f"game_idle = Photo Background Found")
-                #     self.mpv_player_triggered = True
-                #     self.external_master_mpv_players = GameIdleMPVPlayer(files=self.media_assets_location)
-                #     self.external_master_mpv_players.setParent(self)
-                #     self.external_master_mpv_players.show()
-                #
-                # elif self.media_assets_location.endswith(".svg"):
-                #
-                #     print(f"game_idle = SVG Animated Background Found")
-                #     self.svg_widget = QSvgWidget(self.media_assets_location)
-                #     self.svg_widget.resize(self.screen_width, self.screen_height)
-                #     self.svg_widget.setParent(self)
-                #     self.svg_widget.show()
-                #
-                # else:
-                #     try:
-                #         self.master_background.setPixmap(QPixmap(self.media_assets_location).scaled(self.screen_width, self.screen_height))
-                #         self.setCentralWidget(self.master_background)
-                #     except Exception as error:
-                #         print(f'game_idle - Error: {error}')
+                except Exception as error:
+                    print(f'game_idle - Error: {error}')
 
             else:
                 print(f"game_idle - No videos found in folder. Nothing to play.")
