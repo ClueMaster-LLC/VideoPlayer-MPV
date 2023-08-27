@@ -50,7 +50,8 @@ class GameIdleMPVPlayer(QWidget):
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
                                                         input_vo_keyboard=True,
-                                                        loop_playlist="inf"
+                                                        loop_playlist="inf",
+                                                        image_display_duration="5",
                                                         )
         elif PLATFORM == "AMD":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
@@ -58,7 +59,8 @@ class GameIdleMPVPlayer(QWidget):
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
                                                         input_vo_keyboard=True,
-                                                        loop_playlist="inf"
+                                                        loop_playlist="inf",
+                                                        image_display_duration="5",
                                                         )
         else:
             print("VM MPV Player")
@@ -66,7 +68,8 @@ class GameIdleMPVPlayer(QWidget):
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
                                                         input_vo_keyboard=True,
-                                                        loop_playlist="inf"
+                                                        loop_playlist="inf",
+                                                        image_display_duration="5",
                                                         )
 
         # instance methods
