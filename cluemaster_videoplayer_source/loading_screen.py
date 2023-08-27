@@ -139,6 +139,8 @@ class LoadingBackend(QThread):
 
                     except requests.exceptions.ConnectionError:
                         # if the code inside the try block faces connection error while making api calls, pass
+                        # print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
+                        # self.proceed.emit(True)
                         pass
 
                     except json.decoder.JSONDecodeError:
@@ -188,6 +190,8 @@ class LoadingBackend(QThread):
 
         except requests.exceptions.ConnectionError:
             # if the code inside the try block faces connection error while making api calls, pass
+            print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
+            self.proceed.emit(True)
             pass
 
         except json.decoder.JSONDecodeError:

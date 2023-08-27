@@ -90,14 +90,14 @@ class GameIdleMPVPlayer(QWidget):
             print(f'PlayList Files: {self.playlist_files}')
             for file in self.playlist_files:
                 # if file.endswith(".mp4") or file.endswith(".mkv") or file.endswith(".mpg") or file.endswith(".mpeg") or file.endswith(".m4v"):
-                print(">>> File appended to playlist - ", file)
+                # print(">>> File appended to playlist - ", file)
                 self.master_animated_image_player.playlist_append(file)
 
                 # else:
                 #     print(f'game_idle - no video files found to load into playlist')
                 #     pass
 
-            print(self.master_animated_image_player.playlist_filenames)
+            # print(self.master_animated_image_player.playlist_filenames)
 
             self.master_animated_image_player.playlist_pos = 0
 

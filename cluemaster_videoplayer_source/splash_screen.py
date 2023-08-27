@@ -16,10 +16,6 @@ from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QMovie, QIcon
 from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QDesktopWidget
 
-# Setting up the base directories
-# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterVideoPlayer")
-
 snap_version = os.environ.get("SNAP_VERSION")
 
 
@@ -103,7 +99,7 @@ class SplashBackend(QThread):
                     # if api call is facing connection error, wait for 2 seconds and then retry
                     time.sleep(2)
                     self.skip_authentication.emit(True)
-                    break
+                    print(f'splash_screen - No Connection to Internet. Skipping to Load Screen.')
 
                 else:
                     break
