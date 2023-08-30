@@ -7,8 +7,11 @@ import random
 import time
 import subprocess
 import requests
+
+import threads
 from apis import *
 from settings import *
+
 import main
 from string import Template
 from requests.structures import CaseInsensitiveDict
@@ -241,8 +244,10 @@ class SplashWindow(QWidget):
                                       "IsDownloadConfigsThreadRunning": False, "IsUpdateRoomInfoThreadRunning": False,
                                       "IsShutdownRestartRequestThreadRunning": False, "ResettingGame": False}
 
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json"), "w") as thread_file:
-                json.dump(thread_info_dictionary, thread_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json"), "w") as thread_file:
+            #     json.dump(thread_info_dictionary, thread_file)
+            threads.THREAD_INFO = thread_info_dictionary
+
         else:
             print("Creating Configuration Directories")
             os.makedirs(os.path.join(MASTER_DIRECTORY, "assets/application data"))
@@ -251,8 +256,9 @@ class SplashWindow(QWidget):
                                       "IsDownloadConfigsThreadRunning": False, "IsUpdateRoomInfoThreadRunning": False,
                                       "IsShutdownRestartRequestThreadRunning": False, "ResettingGame": False}
 
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json"), "w") as thread_file:
-                json.dump(thread_info_dictionary, thread_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json"), "w") as thread_file:
+            #     json.dump(thread_info_dictionary, thread_file)
+            threads.THREAD_INFO = thread_info_dictionary
 
     def frontend(self):
         """ this methods holds the codes for the different labels and animations"""

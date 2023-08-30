@@ -17,10 +17,6 @@ from PyQt5.QtSvg import QSvgWidget
 import authentication_screen
 from requests.structures import CaseInsensitiveDict
 
-# Setting up base directories
-
-# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
 
 # Pulling up platform specifications
 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json")) as platform_specs_file:
@@ -68,6 +64,7 @@ class CheckTimerRequestThread(QThread):
         # fetching device key and api key
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary_of_unique_code = json.load(unique_code_json_file)
+            print(f'Checking HDD again for unique_code.json')
 
         self.device_id = initial_dictionary_of_unique_code["Device Unique Code"]
         self.api_key = initial_dictionary_of_unique_code["apiKey"]
@@ -348,6 +345,7 @@ class NormalWindow(QMainWindow):
         # opening unique code json file and declaring api variables
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary_of_unique_code = json.load(unique_code_json_file)
+        print(f'Checking HDD for unique_code_file')
 
         self.device_id = initial_dictionary_of_unique_code["Device Unique Code"]
         self.api_key = initial_dictionary_of_unique_code["apiKey"]
@@ -372,8 +370,9 @@ class NormalWindow(QMainWindow):
                                   "IsDownloadConfigsThreadRunning": True, "IsUpdateRoomInfoThreadRunning": True,
                                   "IsShutdownRestartRequestThreadRunning": True, "ResettingGame": False}
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json"), "w") as thread_file:
-            json.dump(thread_info_dictionary, thread_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json"), "w") as thread_file:
+        #     json.dump(thread_info_dictionary, thread_file)
+        threads.THREAD_INFO = thread_info_dictionary
 
     def window_configurations(self):
         """ this method contains the codes for the configuration of the window"""
@@ -791,10 +790,10 @@ class NormalWindow(QMainWindow):
         self.is_game_idle = False
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
-                initial_dictionary = json.load(game_details_json_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
+            #     initial_dictionary = json.load(game_details_json_file)
 
-            game_details_response = initial_dictionary
+            game_details_response = threads.GAME_DETAILS
 
             if game_details_response["isIntro"] is True:
                 # intro video is enabled
@@ -823,8 +822,10 @@ class NormalWindow(QMainWindow):
         self.game_details_thread.updateCluesUsed.connect(self.trigger_update_clues_used_method)
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
-                initial_dictionary_of_game_details = json.load(game_details_json_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
+            #     initial_dictionary_of_game_details = json.load(game_details_json_file)
+
+            initial_dictionary_of_game_details = threads.GAME_DETAILS
 
             print(">>> Master Media Files - Music", initial_dictionary_of_game_details['isMusic'])
 
@@ -888,10 +889,10 @@ class NormalWindow(QMainWindow):
             played, if yes then starts the main game screen else starts the intro video player"""
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
-                initial_dictionary = json.load(game_details_json_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
+            #     initial_dictionary = json.load(game_details_json_file)
 
-            game_details_response = initial_dictionary
+            game_details_response = threads.GAME_DETAILS
             game_id = game_details_response["gameId"]
 
             get_intro_request_api = GAME_INTRO_REQUEST.format(game_id)
@@ -938,10 +939,10 @@ class NormalWindow(QMainWindow):
         print("Verify ending of Intro Video")
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
-                initial_dictionary = json.load(game_details_json_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
+            #     initial_dictionary = json.load(game_details_json_file)
 
-            game_details_response = initial_dictionary
+            game_details_response = threads.GAME_DETAILS
             if game_details_response["gameStatus"] != 3:
 
                 self.is_intro_video_playing = False
@@ -964,10 +965,10 @@ class NormalWindow(QMainWindow):
             response to the webapp saying that the intro video ended in the app """
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
-                initial_dictionary = json.load(game_details_json_file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/GameDetails.json")) as game_details_json_file:
+            #     initial_dictionary = json.load(game_details_json_file)
 
-            game_details_response = initial_dictionary
+            game_details_response = threads.GAME_DETAILS
             game_id = game_details_response["gameId"]
 
             get_intro_request_api = GAME_INTRO_REQUEST.format(game_id)
@@ -1321,7 +1322,7 @@ class NormalWindow(QMainWindow):
                 else:
                     print(">>> Console output - Master api is up and running")
                     self.master_api_status = True
-                    self.external_network_status_window.close()
+                    # self.external_network_status_window.close()
             except AttributeError:
                 pass
 
@@ -1334,7 +1335,7 @@ class NormalWindow(QMainWindow):
                     print(">>> Console output - Master api is down, red bars")
                     self.master_api_status = False
                     self.external_network_status_window = NetworkStatus()
-                    self.external_network_status_window.frontend()
+                    # self.external_network_status_window.frontend()
             except AttributeError:
                 pass
 

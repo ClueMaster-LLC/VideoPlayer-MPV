@@ -142,6 +142,7 @@ class GameIdle(QMainWindow):
         # apis
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary = json.load(unique_code_json_file)
+        print(f'loading unique code file on HDD')
 
         unique_code_responses = initial_dictionary
 
