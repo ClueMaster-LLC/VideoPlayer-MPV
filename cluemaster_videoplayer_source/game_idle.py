@@ -173,7 +173,7 @@ class GameIdle(QMainWindow):
                 initial_dictionary = json.load(configurations_json_file)
 
             room_info_response = initial_dictionary
-            self.media_folder = os.path.join(MASTER_DIRECTORY, "assets/clue medias")
+            self.media_folder = os.path.join(MASTER_DIRECTORY, "assets/media")
 
             # Let's try to access a usb drive and play videos inserted as well
             try:
@@ -207,7 +207,7 @@ class GameIdle(QMainWindow):
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
 
-                self.clue_medias = os.path.join(MASTER_DIRECTORY, "assets/clue medias/")
+                self.clue_medias = os.path.join(MASTER_DIRECTORY, "assets/media/")
                 self.media_assets_location = [self.clue_medias + file for file in os.listdir(self.clue_medias)]
                 print(">>> Console output - Media Files ", self.media_assets_location)
 

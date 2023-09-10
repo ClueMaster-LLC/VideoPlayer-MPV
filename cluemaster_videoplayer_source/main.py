@@ -7,6 +7,7 @@ snap_version = os.environ.get("SNAP_VERSION")
 global ipv4
 ipv4 = None
 
+
 def main():
     if __name__ == "__main__":
         application = QApplication([])

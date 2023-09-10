@@ -47,7 +47,6 @@ class SplashBackend(QThread):
         # default variables
         self.var_skip_authentication = None
         self.is_killed = False
-        # main.ipv4 = fetch_ipv4_device_address()
 
     def run(self):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
@@ -58,6 +57,13 @@ class SplashBackend(QThread):
         if os.path.isdir(os.path.join(MASTER_DIRECTORY, "assets/application data")) is False:
             # if there is no directory named application data inside the assets directory then create one
             os.makedirs(os.path.join(MASTER_DIRECTORY, "assets/application data"))
+        else:
+            # if the directory already exists then pass
+            pass
+
+        if os.path.isdir(os.path.join(MASTER_DIRECTORY, "assets/media")) is False:
+            # if there is no directory named application data inside the assets directory then create one
+            os.makedirs(os.path.join(MASTER_DIRECTORY, "assets/media"))
         else:
             # if the directory already exists then pass
             pass
@@ -91,8 +97,6 @@ class SplashBackend(QThread):
                         self.skip_authentication.emit(True)
                         # self.var_skip_authentication = True
 
-                    # main.ipv4 = self.fetch_ipv4_device_address()
-                    # ipv4_address = self.fetch_ipv4_device_address()
                     json_object_of_unique_code_file["IPv4 Address"] = main.ipv4
 
                     with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as unique_code_json_file:

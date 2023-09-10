@@ -64,7 +64,7 @@ class LoadingBackend(QThread):
                     # checking responses of room info api, if response is not No Configurations Files Found, then
                     # move forward and validate every media files and check for updated or new files
 
-                    main_clue_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "clue medias")
+                    main_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "media")
 
                     response_of_room_info_api = requests.get(room_info_api_url, headers=headers)
                     response_of_room_info_api.raise_for_status()
@@ -78,9 +78,9 @@ class LoadingBackend(QThread):
                     self.downloading_media.emit()
                     time.sleep(2)
 
-                    if os.path.isdir(main_clue_media_file_directory) is False:
-                        shutil.rmtree(main_clue_media_file_directory, ignore_errors=True)
-                        os.mkdir(main_clue_media_file_directory)
+                    if os.path.isdir(main_media_file_directory) is False:
+                        shutil.rmtree(main_media_file_directory, ignore_errors=True)
+                        os.mkdir(main_media_file_directory)
 
                     # downloading clue medias
                     index = 0
@@ -97,13 +97,13 @@ class LoadingBackend(QThread):
                                 index += int(1)
                                 continue
                             else:
-                                file_location = os.path.join(main_clue_media_file_directory, file_name)
+                                file_location = os.path.join(main_media_file_directory, file_name)
 
                                 if os.path.isfile(file_location) is False:
-                                    clue_media_content = requests.get(url, headers=headers)
-                                    clue_media_content.raise_for_status()
-                                    with open(os.path.join(main_clue_media_file_directory, file_name), "wb") as file:
-                                        file.write(clue_media_content.content)
+                                    media_content = requests.get(url, headers=headers)
+                                    media_content.raise_for_status()
+                                    with open(os.path.join(main_media_file_directory, file_name), "wb") as file:
+                                        file.write(media_content.content)
 
                                     # emit file downloaded signal
                                     self.media_file_downloaded.emit()
@@ -117,8 +117,8 @@ class LoadingBackend(QThread):
                             index += int(1)
 
                     # Delete files that are no longer needed.
-                    for filename in os.listdir(main_clue_media_file_directory):
-                        path = os.path.join(main_clue_media_file_directory, filename)
+                    for filename in os.listdir(main_media_file_directory):
+                        path = os.path.join(main_media_file_directory, filename)
                         if filename not in file_array:
                             try:
                                 os.remove(path)
@@ -294,7 +294,7 @@ class LoadingScreen(QWidget):
         self.local_ipv4_address.setAlignment(Qt.AlignHCenter)
         self.local_ipv4_address.setFont(QFont("IBM Plex Mono", 20))
         self.local_ipv4_address.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
-        self.local_ipv4_address.setText(f"Local IP : {main.ipv4}") #fetch_device_ipv4_address())
+        self.local_ipv4_address.setText(f"Local IP : {main.ipv4}")
         self.local_ipv4_address.show()
 
         stylesheet = """QProgressBar{background-color: transparent; border: 3px solid #4e71cf; border-radius: 5px;}
