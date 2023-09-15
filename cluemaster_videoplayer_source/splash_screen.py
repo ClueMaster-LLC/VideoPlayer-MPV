@@ -90,12 +90,10 @@ class SplashBackend(QThread):
                         api_key = self.generate_secure_api_key(device_id=device_unique_code)
                         json_object_of_unique_code_file["apiKey"] = api_key
                         self.skip_authentication.emit(False)
-                        # self.var_skip_authentication = False
 
                     else:
                         # else jump to loading screen
                         self.skip_authentication.emit(True)
-                        # self.var_skip_authentication = True
 
                     json_object_of_unique_code_file["IPv4 Address"] = main.ipv4
 
@@ -103,8 +101,8 @@ class SplashBackend(QThread):
                         json.dump(json_object_of_unique_code_file, unique_code_json_file)
 
                 except requests.exceptions.ConnectionError:
-                    # if api call is facing connection error, wait for 2 seconds and then retry
-                    time.sleep(2)
+                    # if api call is facing connection error, jump to loading screen
+                    # time.sleep(2)
                     self.skip_authentication.emit(True)
                     print(f'splash_screen - No Connection to Internet. Skipping to Load Screen.')
 
@@ -159,7 +157,7 @@ class SplashBackend(QThread):
                 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as file:
                     json.dump(json_object, file)
             except Exception as error:
-                print(f'Error = {error}')
+                print(f'splash_screen - Error = {error}')
 
             self.skip_authentication.emit(False)
 

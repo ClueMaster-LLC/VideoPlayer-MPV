@@ -44,7 +44,7 @@ class GameIdleMPVPlayer(QWidget):
             config = json.load(master_specs)["mpv_configurations"]
 
         # widget
-        if PLATFORM == "Intel":
+        if PLATFORM == "game_idle - GPU TYPE: Intel":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
@@ -53,7 +53,7 @@ class GameIdleMPVPlayer(QWidget):
                                                         loop_playlist="inf",
                                                         image_display_duration="5",
                                                         )
-        elif PLATFORM == "AMD":
+        elif PLATFORM == "game_idle - GPU TYPE: AMD":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
@@ -63,7 +63,7 @@ class GameIdleMPVPlayer(QWidget):
                                                         image_display_duration="5",
                                                         )
         else:
-            print("VM MPV Player")
+            print("game_idle - GPU TYPE: VM MPV Player")
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         vo=config["vo"],
                                                         input_default_bindings=True,
@@ -87,7 +87,7 @@ class GameIdleMPVPlayer(QWidget):
 
         # adding file to mpv playlist
         try:
-            print(f'PlayList Files: {self.playlist_files}')
+            print(f'>>> game_idle - PlayList Files: {self.playlist_files}')
             for file in self.playlist_files:
                 # if file.endswith(".mp4") or file.endswith(".mkv") or file.endswith(".mpg") or file.endswith(".mpeg") or file.endswith(".m4v"):
                 # print(">>> File appended to playlist - ", file)
@@ -142,7 +142,7 @@ class GameIdle(QMainWindow):
         # apis
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary = json.load(unique_code_json_file)
-        print(f'loading unique code file on HDD')
+        print(f'game_idle - loading unique code file on HDD')
 
         unique_code_responses = initial_dictionary
 
@@ -169,35 +169,46 @@ class GameIdle(QMainWindow):
         """this method sets the available background image to the window as the central widget"""
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as configurations_json_file:
-                initial_dictionary = json.load(configurations_json_file)
-
-            room_info_response = initial_dictionary
-            self.media_folder = os.path.join(MASTER_DIRECTORY, "assets/media")
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json")) as configurations_json_file:
+            #     initial_dictionary = json.load(configurations_json_file)
+            #
+            # room_info_response = initial_dictionary
+            self.media_folder = os.path.join(MASTER_DIRECTORY, "assets/media/")
 
             # Let's try to access a usb drive and play videos inserted as well
             try:
-                import re
-                import subprocess
-                device_re = re.compile(
-                    b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-                df = subprocess.check_output("lsusb")
-                devices = []
-                for i in df.split(b'\n'):
-                    if i:
-                        info = device_re.match(i)
-                        if info:
-                            dinfo = info.groupdict()
-                            dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
-                            devices.append(dinfo)
+                # lets try to find all the contents on USB drives for playing videos.
+                import glob
 
-                print(devices)
+                # Define a function to list file contents of a directory and its subdirectories
+                def list_files_in_directory(directory):
+                    file_list = []
+                    for root, dirs, files in os.walk(directory):
+                        for file in files:
+                            file_list.append(os.path.join(root, file))
+                    return file_list
+
+                # Detect all mounted USB drives
+                usb_drives = glob.glob('/media/*')
+
+                # Initialize an empty array to store file contents
+                file_contents = []
+
+                # Iterate through each USB drive and list file contents
+                for usb_drive in usb_drives:
+                    files_on_drive = list_files_in_directory(usb_drive)
+                    file_contents.extend(files_on_drive)
+
+                # Now, 'file_contents' contains the paths to all files on USB drives
+                print(file_contents)
+
+
             except Exception as usberror:
                 print(f'game_idle - Error Accessing USB: {usberror}')
 
             # if there are files then play them.
-
-            if len(self.media_folder) != 0:
+            media_folder_dir = os.listdir(self.media_folder)
+            if len(media_folder_dir) != 0:
             # if self.no_media_files is False:
 
                 # if room_info_response["IsPhoto"] is True:
@@ -209,7 +220,7 @@ class GameIdle(QMainWindow):
 
                 self.clue_medias = os.path.join(MASTER_DIRECTORY, "assets/media/")
                 self.media_assets_location = [self.clue_medias + file for file in os.listdir(self.clue_medias)]
-                print(">>> Console output - Media Files ", self.media_assets_location)
+                # print(">>> Console output - Media Files ", self.media_assets_location)
 
                 try:
                     self.mpv_player_triggered = True

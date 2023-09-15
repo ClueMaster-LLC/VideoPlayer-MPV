@@ -141,7 +141,7 @@ class GameDetails(QThread):
 
             finally:
                 # and finally
-                time.sleep(3)
+                time.sleep(10)
 
     def stop(self):
         """this method when called updates the thread running status to False and in the next loop when the condition
@@ -293,7 +293,7 @@ class UpdateRoomInfo(QThread):
 
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary = json.load(unique_code_json_file)
-        print(f'loading unique code file on HDD')
+        print(f'threads - loading unique code file on HDD')
 
         unique_code_response = initial_dictionary
         device_unique_code = unique_code_response["Device Unique Code"]
@@ -335,6 +335,7 @@ class UpdateRoomInfo(QThread):
                               "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
                               "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
 
+                # TODO: change to in memory for less hdd writing. use new vs old values for change detection
                 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json"), "w") as device_config_json_file:
                     json.dump(dictionary, device_config_json_file)
 
@@ -444,7 +445,7 @@ class GetGameClue(QThread):
                 else:
                     return
 
-                print(">>> Console output - Clue response")
+                print(">>> Console output - Checking for New Clue response")
                 json_response = requests.get(game_clue_url, headers=headers)
                 json_response.raise_for_status()
                 gameClueId = json_response.json()["gameClueId"]

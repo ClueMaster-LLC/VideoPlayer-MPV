@@ -27,6 +27,7 @@ class LoadingBackend(QThread):
     downloading_configurations = pyqtSignal()
     proceed = pyqtSignal(bool)
     complete_reset = pyqtSignal()
+    msg_no_internet = pyqtSignal()
 
     def __init__(self):
         super(LoadingBackend, self).__init__()
@@ -39,11 +40,12 @@ class LoadingBackend(QThread):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
             codes for every work, the thread does"""
 
-        time.sleep(15)
+        # time.sleep(15)
 
         try:
             with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
                 json_object = json.load(unique_code_json_file)
+                print(">>> Loading_Screen output - Loading unique_code.json file from HDD")
 
             device_unique_code = json_object["Device Unique Code"]
             api_key = json_object["apiKey"]
@@ -77,13 +79,14 @@ class LoadingBackend(QThread):
 
                     # emit authentication details
                     self.authentication_details.emit(
-                        {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"]) + 6})
-                    time.sleep(2)
+                        {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"])})
+                    print(f'loading_screen - Length: {len(response_of_room_info_api.json()["ClueMediaFiles"])}')
+                    time.sleep(1)
 
                     # emit downloading media slot
                     print("Downloading emit")
                     self.downloading_media.emit()
-                    time.sleep(2)
+                    time.sleep(1)
 
                     if os.path.isdir(main_media_file_directory) is False:
                         shutil.rmtree(main_media_file_directory, ignore_errors=True)
@@ -119,9 +122,13 @@ class LoadingBackend(QThread):
                                     self.media_file_downloaded.emit()
 
                                 index += int(1)
+                                self.media_file_downloaded.emit()
+                                # time.sleep(1)
                                 continue
+
                         else:
                             index += int(1)
+                            self.media_file_downloaded.emit()
 
                     # Delete files that are no longer needed.
                     for filename in os.listdir(main_media_file_directory):
@@ -147,6 +154,8 @@ class LoadingBackend(QThread):
                     except requests.exceptions.ConnectionError:
                         # if the code inside the try block faces connection error while making api calls, pass
                         # print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
+                        self.msg_no_internet.emit()
+                        time.sleep(5)
                         self.proceed.emit(True)
                         pass
 
@@ -166,7 +175,7 @@ class LoadingBackend(QThread):
 
                     # emit downloading configurations signal
                     self.downloading_configurations.emit()
-                    time.sleep(3)
+                    time.sleep(2)
 
                     data = {"Room Minimum Players": response_of_room_info_api.json()["RoomMinPlayers"],
                             "Room Maximum Players": response_of_room_info_api.json()["RoomMaxPlayers"],
@@ -184,12 +193,14 @@ class LoadingBackend(QThread):
                     with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device_configurations.json"), "w") as file:
                         json.dump(data, file)
 
-                    self.proceed.emit(True)
+                    time.sleep(5)
                     print(">> loading_screen - Finished Loading")
+                    self.proceed.emit(True)
                     self.stop()
 
                 else:
                     print(">> loading_screen - No Room Configuration Files Found")
+                    time.sleep(5)
                     pass
 
         except simplejson.errors.JSONDecodeError:
@@ -197,10 +208,16 @@ class LoadingBackend(QThread):
             pass
 
         except requests.exceptions.ConnectionError:
-            # if the code inside the try block faces connection error while making api calls, pass
+            # if the code inside the try block faces connection error while making api calls,
+            # pass and skip to idle screen
+
+            self.msg_no_internet.emit()
+            time.sleep(5)
             print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
+
             self.proceed.emit(True)
-            pass
+            self.stop()
+            # pass
 
         except json.decoder.JSONDecodeError:
             # if the code inside the try block faces json decode error while opening json files, pass
@@ -336,6 +353,7 @@ class LoadingScreen(QWidget):
         self.loading_thread.downloading_configurations.connect(self.downloading_configurations)
         self.loading_thread.proceed.connect(self.switch_window)
         self.loading_thread.complete_reset.connect(self.reset_game)
+        self.loading_thread.msg_no_internet.connect(self.msg_no_internet)
 
     def authentication_details(self, details):
         """updating the self.auth_details variable with latest authentication details from backend
@@ -366,6 +384,12 @@ class LoadingScreen(QWidget):
         self.download_media_files_progressbar.hide()
 
         self.loading_label.setText("confirming configurations download ...")
+        self.loading_label.show()
+
+    def msg_no_internet(self):
+        """hide the progressbar and show the self.loading_label and update its text to downloading configurations ..."""
+        self.download_media_files_progressbar.hide()
+        self.loading_label.setText("no connection to internet ...")
         self.loading_label.show()
 
     def reset_game(self):

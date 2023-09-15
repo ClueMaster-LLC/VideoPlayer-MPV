@@ -345,7 +345,7 @@ class NormalWindow(QMainWindow):
         # opening unique code json file and declaring api variables
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary_of_unique_code = json.load(unique_code_json_file)
-        print(f'Checking HDD for unique_code_file')
+        print(f'normal_screen - Checking HDD for unique_code_file')
 
         self.device_id = initial_dictionary_of_unique_code["Device Unique Code"]
         self.api_key = initial_dictionary_of_unique_code["apiKey"]
