@@ -80,11 +80,11 @@ class LoadingBackend(QThread):
                     # emit authentication details
                     self.authentication_details.emit(
                         {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"])})
-                    print(f'loading_screen - Length: {len(response_of_room_info_api.json()["ClueMediaFiles"])}')
+                    # print(f'loading_screen - Length: {len(response_of_room_info_api.json()["ClueMediaFiles"])}')
                     time.sleep(1)
 
                     # emit downloading media slot
-                    print("Downloading emit")
+                    # print("Downloading emit")
                     self.downloading_media.emit()
                     time.sleep(1)
 

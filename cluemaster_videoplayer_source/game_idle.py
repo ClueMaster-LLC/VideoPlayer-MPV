@@ -185,22 +185,23 @@ class GameIdle(QMainWindow):
                     file_list = []
                     for root, dirs, files in os.walk(directory):
                         for file in files:
-                            file_list.append(os.path.join(root, file))
+                            if file.endswith(".mp4"):
+                                file_list.append(os.path.join(root, file))
                     return file_list
 
                 # Detect all mounted USB drives
-                usb_drives = glob.glob('/media/*')
+                usb_drives = glob.glob('/media/test/*')
 
                 # Initialize an empty array to store file contents
-                file_contents = []
+                self.usb_file_contents = []
 
                 # Iterate through each USB drive and list file contents
                 for usb_drive in usb_drives:
                     files_on_drive = list_files_in_directory(usb_drive)
-                    file_contents.extend(files_on_drive)
+                    self.usb_file_contents.extend(files_on_drive)
 
                 # Now, 'file_contents' contains the paths to all files on USB drives
-                print(file_contents)
+                print(self.usb_file_contents)
 
 
             except Exception as usberror:
@@ -219,8 +220,9 @@ class GameIdle(QMainWindow):
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
 
                 self.clue_medias = os.path.join(MASTER_DIRECTORY, "assets/media/")
-                self.media_assets_location = [self.clue_medias + file for file in os.listdir(self.clue_medias)]
-                # print(">>> Console output - Media Files ", self.media_assets_location)
+                self.media_assets_location = ([self.clue_medias + file for file in os.listdir(self.clue_medias)]
+                                              + self.usb_file_contents)
+                print(">>> Console output - Media Files ", self.media_assets_location)
 
                 try:
                     self.mpv_player_triggered = True
