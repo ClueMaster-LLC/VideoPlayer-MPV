@@ -60,9 +60,15 @@ class LoadingBackend(QThread):
                 room_info_api = requests.get(room_info_api_url, headers=headers)
                 room_info_api.raise_for_status()
 
+                print(room_info_api.content.decode("utf-8"))
+
                 if room_info_api.content.decode("utf-8") != "No Configurations Files Found":
                     # checking responses of room info api, if response is not No Configurations Files Found, then
                     # move forward and validate every media files and check for updated or new files
+
+                    #TODO: There is a problem with the room_info_api. When setting up a new room for the first time,
+                    # there is "No Configurations Files Found" response until any setting is changed, then it contains
+                    # values. So the new API needs to be changed to only and always give MediaFiles and nothing else.
 
                     main_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "media")
 
@@ -75,6 +81,7 @@ class LoadingBackend(QThread):
                     time.sleep(2)
 
                     # emit downloading media slot
+                    print("Downloading emit")
                     self.downloading_media.emit()
                     time.sleep(2)
 
@@ -140,7 +147,7 @@ class LoadingBackend(QThread):
                     except requests.exceptions.ConnectionError:
                         # if the code inside the try block faces connection error while making api calls, pass
                         # print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
-                        # self.proceed.emit(True)
+                        self.proceed.emit(True)
                         pass
 
                     except json.decoder.JSONDecodeError:
@@ -182,6 +189,7 @@ class LoadingBackend(QThread):
                     self.stop()
 
                 else:
+                    print(">> loading_screen - No Room Configuration Files Found")
                     pass
 
         except simplejson.errors.JSONDecodeError:

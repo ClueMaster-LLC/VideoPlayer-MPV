@@ -103,16 +103,16 @@ class AuthenticationBackend(QThread):
                             # room_data_intro_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "intro media")
                             # room_data_fail_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "fail end media")
                             # room_data_success_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "success end media")
-                            main_clue_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "clue medias")
+                            main_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "media")
 
                             if os.path.isdir(main_room_data_directory):
                                 shutil.rmtree(main_room_data_directory, ignore_errors=True)
 
-                            if os.path.isdir(main_clue_media_file_directory):
-                                shutil.rmtree(main_clue_media_file_directory, ignore_errors=True)
+                            if os.path.isdir(main_media_file_directory):
+                                shutil.rmtree(main_media_file_directory, ignore_errors=True)
 
                             os.mkdir(main_room_data_directory)
-                            os.mkdir(main_clue_media_file_directory)
+                            os.mkdir(main_media_file_directory)
                             # os.mkdir(room_data_music_subfolder)
                             # os.mkdir(room_data_picture_subfolder)
                             # os.mkdir(room_data_video_subfolder)
@@ -279,7 +279,7 @@ class AuthenticationBackend(QThread):
                                         index += int(1)
                                         continue
                                     else:
-                                        with open(os.path.join(main_clue_media_file_directory, file_name), "wb") as file:
+                                        with open(os.path.join(main_media_file_directory, file_name), "wb") as file:
                                             file.write(clue_media_content.content)
 
                                         # emit file downloaded signal
@@ -332,6 +332,7 @@ class AuthenticationBackend(QThread):
 
         except requests.exceptions.ConnectionError:
             # if the app faces connection error when making api calls, then pass
+            self.proceed.emit(True)
             pass
 
         except json.decoder.JSONDecodeError:
