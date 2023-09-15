@@ -425,7 +425,7 @@ class AuthenticationWindow(QWidget):
         self.footer_layout = QHBoxLayout()
 
         alpha_label = QLabel(self)
-        alpha_label.setText("ClueMaster TV Display Timer")
+        alpha_label.setText("ClueMaster Video Player")
         alpha_label.setAlignment(Qt.AlignHCenter)
         alpha_label.setFont(QFont("IBM Plex Mono", 30))
         alpha_label.font().setWeight(500)
