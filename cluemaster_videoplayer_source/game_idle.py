@@ -14,9 +14,6 @@ import json
 import threads
 from requests.structures import CaseInsensitiveDict
 
-# Setting up base directories
-# ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-# MASTER_DIRECTORY = os.path.join(os.environ.get("HOME"), "CluemasterDisplay")
 
 # Pulling up platform specifications
 with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json")) as platform_specs_file:
@@ -138,6 +135,9 @@ class GameIdle(QMainWindow):
         self.app_root = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.media_folder = None
         self.filtered_usb_files = None
+        self.clue_media = None
+        self.external_master_mpv_players = None
+        self.media_assets_location = None
 
         self.setStyleSheet("background-color: #191F26;")
 
@@ -180,34 +180,9 @@ class GameIdle(QMainWindow):
 
             # Let's try to access an usb drive and play videos inserted as well
             try:
-                # let's try to find all the contents on USB drives for playing videos.
-                # import glob
-                #
-                # # Define a function to list file contents of a directory and its subdirectories
-                # def list_files_in_directory(directory):
-                #     file_list = []
-                #     for root, dirs, files in os.walk(directory):
-                #         for file in files:
-                #             if file.endswith(".mp4", ".m4v", ".avi", ".png"):
-                #                 file_list.append(os.path.join(root, file))
-                #     return file_list
-                #
-                # # Detect all mounted USB drives
-                # usb_drives = glob.glob('/media/test/*')
-                #
-                # # Initialize an empty array to store file contents
-                # self.usb_file_contents = []
-                #
-                # # Iterate through each USB drive and list file contents
-                # for usb_drive in usb_drives:
-                #     files_on_drive = list_files_in_directory(usb_drive)
-                #     self.usb_file_contents.extend(files_on_drive)
-                #
-                # # Now, 'file_contents' contains the paths to all files on USB drives
-                # print(self.usb_file_contents)
-
                 # Define the file extensions you want to filter
-                file_extensions = ['.mp4', '.mpg', '.m4v', '.mkv', '.avi', '.png']
+                file_extensions = ['.mp4', '.mpg', '.mpeg', '.m4v', '.mkv', '.avi', '.png', '.mp3', '.wav', '.gif'
+                                   , '.jpg', '.jpeg']
 
                 # Function to list files in a directory and its subdirectories
                 def list_files(path):
@@ -227,7 +202,7 @@ class GameIdle(QMainWindow):
 
                 # Function to list files on USB drives
                 def list_usb_files():
-                    usb_drive_paths = ["/media/test/{}".format(user) for user in os.listdir("/media/test")]
+                    usb_drive_paths = ["./media/{}".format(user) for user in os.listdir("./media")]
                     usb_files = []
                     for usb_drive_path in usb_drive_paths:
                         if os.path.exists(usb_drive_path):
@@ -237,19 +212,25 @@ class GameIdle(QMainWindow):
                 # List all USB drive files with the specified extensions
                 usb_files = list_usb_files()
                 self.filtered_usb_files = filter_files_by_extension(usb_files, file_extensions)
-                # print(usb_files)
 
-                # Print or process the filtered files as needed
-                # for usb_file in filtered_usb_files:
+                # # Print or process the filtered files as needed
+                # for usb_file in self.filtered_usb_files:
                 #     print(f'FILES ON USB: {usb_file}')
 
             except Exception as usb_error:
                 print(f'game_idle - Error Accessing USB: {usb_error}')
+                self.filtered_usb_files = []
 
             # if there are files then play them.
             media_folder_dir = os.listdir(self.media_folder)
 
-            if len(media_folder_dir) != 0 or self.filtered_usb_files is not None:
+            # test if USB media files exist
+            if self.filtered_usb_files:
+                print(f'game_idle - USB FILES LIST HAS : {self.filtered_usb_files}')
+            if not self.filtered_usb_files:
+                print("game_idle - USB LIST IS EMPTY ", self.filtered_usb_files)
+
+            if len(media_folder_dir) != 0 or self.filtered_usb_files:
             # if self.no_media_files is False:
 
                 # if room_info_response["IsPhoto"] is True:
@@ -259,9 +240,12 @@ class GameIdle(QMainWindow):
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
 
-                self.clue_medias = os.path.join(MASTER_DIRECTORY, "assets/media/")
-                self.media_assets_location = ([self.clue_medias + file for file in os.listdir(self.clue_medias)]
-                                              + self.filtered_usb_files)
+                self.clue_media = os.path.join(MASTER_DIRECTORY, "assets/media/")
+                self.media_assets_location = ([self.clue_media + file for file in os.listdir(self.clue_media)])
+
+                if self.filtered_usb_files:
+                    self.media_assets_location = self.media_assets_location + self.filtered_usb_files
+
                 print(">>> Console output - Media Files ", self.media_assets_location)
 
                 try:
