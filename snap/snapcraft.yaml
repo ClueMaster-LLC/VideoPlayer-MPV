@@ -1,16 +1,12 @@
 name: cluemaster-videoplayer-core
 base: core20 
-version: '2023.08.24'
+version: '2023.09.17'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
   ClueMaster Video Player is a Dynamic TV Display software for escape rooms.
   It loops through videos and playes them. To be used in small kiosk devices.
-  
 grade: stable 
-confinement: strict
-
-architectures:
-  - amd64
+confinement: strict 
 
 apps:
   cluemaster-mediadisplay-core:
@@ -18,7 +14,7 @@ apps:
     restart-condition: always
     command-chain:
       - env-setup
-    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/cluemaster_videoplayer
+    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3 $SNAP/main.py
     environment:
       DISABLE_WAYLAND: 1
 
@@ -61,8 +57,10 @@ parts:
   copy-source-code:
     after: [desktop-qt5]
     plugin: dump
-    source: cluemaster_videoplayer/
+    source: cluemaster_videoplayer_source/
     stage-packages:
+      - python3
+      - bash
       - ffmpeg
       - libass9
       - mpv
@@ -84,7 +82,7 @@ parts:
       - libgl1-mesa-dri
       - python3-pyqt5.qtmultimedia
       - libqt5multimedia5-plugins
-
+      - python3-pyqt5.qtsvg
     stage:
       - -usr/share/alsa/alsa.conf
       - -usr/share/alsa/cards/HDA-Intel.conf
@@ -106,16 +104,32 @@ parts:
       - -usr/share/alsa/pcm/surround50.conf
       - -usr/share/alsa/pcm/surround51.conf
       - -usr/share/alsa/pcm/surround71.conf
+      - -usr/lib/x86_64-linux-gnu/libFLAC.so.8.3.0
+      - -usr/share/doc/libflac8/changelog.Debian.gz
       - -README.md
-
-
     stage-snaps: [mir-kiosk-x11]
 
-  extras:
-    plugin: dump
-    source: static/
+  python-packages:
+    after: [copy-source-code]
+    plugin: python
+    source: .
+    build-packages:
+      - python3-pip
+      - python3-dev
+      - gcc
+      - build-essential
+      - python3-wheel
+      - libpq-dev
+    stage-packages:
+      - libpq5
+    python-packages:
+      - PyQt5 ~= 5.14.1
+      - requests
+      - git+https://github.com/ClueMaster-LLC/python-mpv
+      - simplejson
+      - psutil
     organize:
-      "prepare-launch": "bin/"
+      usr/lib/*/samba/*: usr/lib/
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -151,6 +165,10 @@ parts:
       - libglx0
       - fcitx-frontend-qt5
 
+    stage:
+      - -usr/lib/x86_64-linux-gnu/libwebp.so.6.0.2
+      - -usr/share/doc/libwebp6/changelog.Debian.gz
+
   pulseaudio-common:
     source: bin
     plugin: dump
@@ -158,6 +176,7 @@ parts:
       client-wrapper: bin/client-wrapper
       config: bin/config
       pulseaudio: bin/pulseaudio
+
   alsa-lib:
     plugin: autotools
     source: https://github.com/alsa-project/alsa-lib.git
@@ -167,6 +186,7 @@ parts:
       - -usr/share/aclocal
       - -usr/lib/lib*.la
       - -usr/lib/pkgconfig
+
   pulseaudio:
     plugin: meson
     source: https://github.com/pulseaudio/pulseaudio.git
@@ -252,6 +272,7 @@ parts:
       - -usr/lib/pkgconfig
       - -usr/lib/systemd
       - -etc/dconf
+
   alsa-plugins:
     plugin: autotools
     source: https://github.com/alsa-project/alsa-plugins.git
@@ -272,6 +293,7 @@ parts:
         ln -sf $newlink $link
       done
       cd -
+
   alsa-ucm:
     plugin: dump
     source: https://github.com/alsa-project/alsa-ucm-conf.git
@@ -282,6 +304,12 @@ parts:
       ucm2: usr/share/alsa/ucm2
     prime:
       - -README.md
+
+  extras:
+    plugin: dump
+    source: static/
+    organize:
+      "prepare-launch": "bin/"
 
 environment:
   LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib"
