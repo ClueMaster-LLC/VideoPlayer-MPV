@@ -201,7 +201,9 @@ class LoadingBackend(QThread):
                 else:
                     print(">> loading_screen - No Room Configuration Files Found")
                     time.sleep(5)
-                    pass
+                    self.proceed.emit(True)
+                    self.stop()
+                    # pass
 
         except simplejson.errors.JSONDecodeError:
             # if the code inside the try block faces simplejson decode error while opening json files, pass
