@@ -50,7 +50,7 @@ class LoadingBackend(QThread):
             device_unique_code = json_object["Device Unique Code"]
             api_key = json_object["apiKey"]
 
-            room_info_api_url = ROOM_INFO_API.format(device_unique_code=device_unique_code)
+            get_video_player_files_url = GET_VIDEO_PLAYER_FILES_API.format(device_unique_code=device_unique_code)
             download_files_request_api = DOWNLOAD_FILES_REQUEST.format(unique_code=device_unique_code)
 
             headers = CaseInsensitiveDict()
@@ -59,27 +59,27 @@ class LoadingBackend(QThread):
             while self.is_killed is False:
                 print(">>> Loading_Screen output - Loading Screen Backend")
 
-                room_info_api = requests.get(room_info_api_url, headers=headers)
-                room_info_api.raise_for_status()
+                get_video_player_files_api = requests.get(get_video_player_files_url, headers=headers)
+                get_video_player_files_api.raise_for_status()
 
-                print(room_info_api.content.decode("utf-8"))
+                print(get_video_player_files_api.content.decode("utf-8"))
 
-                if room_info_api.content.decode("utf-8") != "No Configurations Files Found":
+                if get_video_player_files_api.content.decode("utf-8") != "No Configurations Files Found":
                     # checking responses of room info api, if response is not No Configurations Files Found, then
                     # move forward and validate every media files and check for updated or new files
 
-                    #TODO: There is a problem with the room_info_api. When setting up a new room for the first time,
+                    #TODO: There is a problem with the get_video_player_files_api. When setting up a new room for the first time,
                     # there is "No Configurations Files Found" response until any setting is changed, then it contains
                     # values. So the new API needs to be changed to only and always give MediaFiles and nothing else.
 
                     main_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "media")
 
-                    response_of_room_info_api = requests.get(room_info_api_url, headers=headers)
-                    response_of_room_info_api.raise_for_status()
+                    response_of_get_video_player_files_api = requests.get(get_video_player_files_url, headers=headers)
+                    response_of_get_video_player_files_api.raise_for_status()
 
                     # emit authentication details
                     self.authentication_details.emit(
-                        {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"])})
+                        {"media_files": len(response_of_get_video_player_files_api.json()["VideoMediaFiles"])})
                     # print(f'loading_screen - Length: {len(response_of_room_info_api.json()["ClueMediaFiles"])}')
                     time.sleep(1)
 
@@ -96,8 +96,8 @@ class LoadingBackend(QThread):
                     index = 0
                     file_array = []
 
-                    while index <= len(response_of_room_info_api.json()["ClueMediaFiles"]) - 1:
-                        url = response_of_room_info_api.json()["ClueMediaFiles"][index]["FilePath"]
+                    while index <= len(response_of_get_video_player_files_api.json()["VideoMediaFiles"]) - 1:
+                        url = response_of_get_video_player_files_api.json()["VideoMediaFiles"][index]["FilePath"]
 
                         if url is not None:
                             try:
@@ -177,18 +177,20 @@ class LoadingBackend(QThread):
                     self.downloading_configurations.emit()
                     time.sleep(2)
 
-                    data = {"Room Minimum Players": response_of_room_info_api.json()["RoomMinPlayers"],
-                            "Room Maximum Players": response_of_room_info_api.json()["RoomMaxPlayers"],
-                            "Clues Allowed": response_of_room_info_api.json()["CluesAllowed"],
-                            "Clue Size On Screen": response_of_room_info_api.json()["ClueSizeOnScreen"],
-                            "Maximum Number Of Clues": response_of_room_info_api.json()["MaxNoOfClues"],
-                            "Clue Position Vertical": response_of_room_info_api.json()["CluePositionVertical"],
-                            "IsTimeLimit": response_of_room_info_api.json()["IsTimeLimit"],
-                            "Time Limit": response_of_room_info_api.json()["TimeLimit"],
-                            "Time Override": response_of_room_info_api.json()["TimeOverride"],
-                            "IsPhoto": response_of_room_info_api.json()["IsPhoto"],
-                            "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
-                            "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
+                    # data = {"Room Minimum Players": response_of_get_video_player_files_api.json()["RoomMinPlayers"],
+                    #         "Room Maximum Players": response_of_get_video_player_files_api.json()["RoomMaxPlayers"],
+                    #         "Clues Allowed": response_of_get_video_player_files_api.json()["CluesAllowed"],
+                    #         "Clue Size On Screen": response_of_get_video_player_files_api.json()["ClueSizeOnScreen"],
+                    #         "Maximum Number Of Clues": response_of_get_video_player_files_api.json()["MaxNoOfClues"],
+                    #         "Clue Position Vertical": response_of_get_video_player_files_api.json()["CluePositionVertical"],
+                    #         "IsTimeLimit": response_of_get_video_player_files_api.json()["IsTimeLimit"],
+                    #         "Time Limit": response_of_get_video_player_files_api.json()["TimeLimit"],
+                    #         "Time Override": response_of_get_video_player_files_api.json()["TimeOverride"],
+                    #         "IsPhoto": response_of_get_video_player_files_api.json()["IsPhoto"],
+                    #         "IsFailVideo": response_of_get_video_player_files_api.json()["IsFailVideo"],
+                    #         "IsSuccessVideo": response_of_get_video_player_files_api.json()["IsSuccessVideo"]}
+
+                    data = {"VideoMediaFiles": response_of_get_video_player_files_api.json()["VideoMediaFiles"]}
 
                     with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device_configurations.json"), "w") as file:
                         json.dump(data, file)
