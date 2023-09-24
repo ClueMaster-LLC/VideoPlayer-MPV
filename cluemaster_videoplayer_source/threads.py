@@ -291,6 +291,9 @@ class UpdateRoomInfo(QThread):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
             codes for every work, the thread does"""
 
+        # watch for updates for video files
+        video_files_old = None
+
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
             initial_dictionary = json.load(unique_code_json_file)
         print(f'threads - loading unique code file on HDD')
@@ -302,7 +305,7 @@ class UpdateRoomInfo(QThread):
         headers = CaseInsensitiveDict()
         headers["Authorization"] = f"Basic {device_unique_code}:{api_key}"
 
-        get_room_info_api = ROOM_INFO_API.format(device_unique_code=device_unique_code)
+        get_video_player_files_api = GET_VIDEO_PLAYER_FILES_API.format(device_unique_code=device_unique_code)
 
         while True:
             try:
@@ -318,26 +321,40 @@ class UpdateRoomInfo(QThread):
                 else:
                     return
 
-                print(">>> Console output - Update Room Info Response ")
-                response_of_room_info_api = requests.get(get_room_info_api, headers=headers)
-                response_of_room_info_api.raise_for_status()
+                print(">>> Console output - Checking for Video Player Files Changes")
+                response_of_get_video_player_files_api = requests.get(get_video_player_files_api, headers=headers)
+                response_of_get_video_player_files_api.raise_for_status()
 
-                dictionary = {"Room Minimum Players": response_of_room_info_api.json()["RoomMinPlayers"],
-                              "Room Maximum Players": response_of_room_info_api.json()["RoomMaxPlayers"],
-                              "Clues Allowed": response_of_room_info_api.json()["CluesAllowed"],
-                              "Clue Size On Screen": response_of_room_info_api.json()["ClueSizeOnScreen"],
-                              "Maximum Number Of Clues": response_of_room_info_api.json()["MaxNoOfClues"],
-                              "Clue Position Vertical": response_of_room_info_api.json()["CluePositionVertical"],
-                              "IsTimeLimit": response_of_room_info_api.json()["IsTimeLimit"],
-                              "Time Limit": response_of_room_info_api.json()["TimeLimit"],
-                              "Time Override": response_of_room_info_api.json()["TimeOverride"],
-                              "IsPhoto": response_of_room_info_api.json()["IsPhoto"],
-                              "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
-                              "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
+
+                # dictionary = {"Room Minimum Players": response_of_room_info_api.json()["RoomMinPlayers"],
+                #               "Room Maximum Players": response_of_room_info_api.json()["RoomMaxPlayers"],
+                #               "Clues Allowed": response_of_room_info_api.json()["CluesAllowed"],
+                #               "Clue Size On Screen": response_of_room_info_api.json()["ClueSizeOnScreen"],
+                #               "Maximum Number Of Clues": response_of_room_info_api.json()["MaxNoOfClues"],
+                #               "Clue Position Vertical": response_of_room_info_api.json()["CluePositionVertical"],
+                #               "IsTimeLimit": response_of_room_info_api.json()["IsTimeLimit"],
+                #               "Time Limit": response_of_room_info_api.json()["TimeLimit"],
+                #               "Time Override": response_of_room_info_api.json()["TimeOverride"],
+                #               "IsPhoto": response_of_room_info_api.json()["IsPhoto"],
+                #               "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
+                #               "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
+
+                dictionary = {"VideoMediaFiles": response_of_get_video_player_files_api.json()["VideoMediaFiles"]}
+
+                # TODO: FIND CHANGES
+                # video_files_new = dictionary
+                #
+                # if video_files_new != video_files_old:
+                #     print("do something now")
+                #     video_files_old = dictionary
+                # else:
+                #     print("Nothing changed")
+                #     video_files_old = dictionary
+
 
                 # TODO: change to in memory for less hdd writing. use new vs old values for change detection
-                with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json"), "w") as device_config_json_file:
-                    json.dump(dictionary, device_config_json_file)
+                # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json"), "w") as device_config_json_file:
+                #     json.dump(dictionary, device_config_json_file)
 
             except requests.exceptions.ConnectionError:
                 # if the code inside the try block faces connection error while making api calls then pass

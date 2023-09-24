@@ -62,9 +62,9 @@ class LoadingBackend(QThread):
                 get_video_player_files_api = requests.get(get_video_player_files_url, headers=headers)
                 get_video_player_files_api.raise_for_status()
 
-                print(get_video_player_files_api.content.decode("utf-8"))
+                print("loading_screen - API Response: ", get_video_player_files_api.content.decode("utf-8"))
 
-                if get_video_player_files_api.content.decode("utf-8") != "No Configurations Files Found":
+                if get_video_player_files_api.content.decode("utf-8") != "No Media Files Found":
                     # checking responses of room info api, if response is not No Configurations Files Found, then
                     # move forward and validate every media files and check for updated or new files
 
@@ -201,11 +201,13 @@ class LoadingBackend(QThread):
                     self.stop()
 
                 else:
-                    print(">> loading_screen - No Room Configuration Files Found")
+                    print(">> loading_screen - No Video Player Files Found")
                     time.sleep(5)
                     # self.proceed.emit(True)
                     # self.stop()
                     pass
+
+                # print('end and start loop')
 
         except simplejson.errors.JSONDecodeError:
             # if the code inside the try block faces simplejson decode error while opening json files, pass
