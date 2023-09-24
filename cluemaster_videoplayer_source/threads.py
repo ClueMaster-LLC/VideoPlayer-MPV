@@ -103,8 +103,8 @@ class GameDetails(QThread):
             except requests.exceptions.HTTPError as request_error:
                 if "401 Client Error" in str(request_error):
                     print("401 Client Error - Device Removed or Not Registered ( From GameDetails API)")
-                    with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json")) as thread_file:
-                        thread_file_response = json.load(thread_file)
+                    # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json")) as thread_file:
+                    #     thread_file_response = json.load(thread_file)
 
                     # # print(f'Loading ThreadInfo.json file from Memory')
                     thread_file_response = threads.THREAD_INFO

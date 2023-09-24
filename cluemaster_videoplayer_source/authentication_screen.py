@@ -95,8 +95,8 @@ class AuthenticationBackend(QThread):
 
                         if room_info_api.content.decode("utf-8") != "No Configurations Files Found":
 
-                            main_folder = "assets/room data"
-                            main_room_data_directory = os.path.join(MASTER_DIRECTORY, main_folder)
+                            # main_folder = "assets/room data"
+                            # main_room_data_directory = os.path.join(MASTER_DIRECTORY, main_folder)
                             # room_data_music_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "music")
                             # room_data_picture_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "picture")
                             # room_data_video_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "video")
@@ -105,13 +105,13 @@ class AuthenticationBackend(QThread):
                             # room_data_success_end_media_subfolder = os.path.join(MASTER_DIRECTORY, main_folder, "success end media")
                             main_media_file_directory = os.path.join(MASTER_DIRECTORY, "assets", "media")
 
-                            if os.path.isdir(main_room_data_directory):
-                                shutil.rmtree(main_room_data_directory, ignore_errors=True)
+                            # if os.path.isdir(main_room_data_directory):
+                            #     shutil.rmtree(main_room_data_directory, ignore_errors=True)
 
                             if os.path.isdir(main_media_file_directory):
                                 shutil.rmtree(main_media_file_directory, ignore_errors=True)
 
-                            os.mkdir(main_room_data_directory)
+                            # os.mkdir(main_room_data_directory)
                             os.mkdir(main_media_file_directory)
                             # os.mkdir(room_data_music_subfolder)
                             # os.mkdir(room_data_picture_subfolder)
@@ -126,7 +126,7 @@ class AuthenticationBackend(QThread):
 
                             # emit authentication details
                             self.authentication_details.emit(
-                                {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"]) + 6})
+                                {"media_files": len(response_of_room_info_api.json()["ClueMediaFiles"]) + 1})
 
                             # music_file_url = json_response_of_room_info_api["MusicPath"]
                             # picture_file_url = json_response_of_room_info_api["PhotoPath"]
