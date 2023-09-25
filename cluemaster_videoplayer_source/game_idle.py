@@ -41,7 +41,7 @@ class GameIdleMPVPlayer(QWidget):
             config = json.load(master_specs)["mpv_configurations"]
 
         # widget
-        if PLATFORM == "game_idle - GPU TYPE: Intel":
+        if PLATFORM == "Intel":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
@@ -50,7 +50,7 @@ class GameIdleMPVPlayer(QWidget):
                                                         loop_playlist="inf",
                                                         image_display_duration="5"
                                                         )
-        elif PLATFORM == "game_idle - GPU TYPE: AMD":
+        elif PLATFORM == "AMD":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
