@@ -110,6 +110,11 @@ parts:
       - -usr/lib/x86_64-linux-gnu/libFLAC.so.8.3.0
       - -usr/share/doc/libflac8/changelog.Debian.gz
       - -README.md
+      - -usr/lib/x86_64-linux-gnu/libX11-xcb.so.1.0.0
+      - -usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
+      - -usr/share/doc/libx11-6/changelog.Debian.gz
+      - -usr/share/doc/libx11-data/changelog.Debian.gz
+      - -usr/share/doc/libx11-xcb1/changelog.Debian.gz
     stage-snaps: [mir-kiosk-x11]
 
   python-packages:
