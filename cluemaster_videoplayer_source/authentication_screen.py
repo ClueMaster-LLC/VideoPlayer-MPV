@@ -4,6 +4,8 @@ import shutil
 import json
 import requests
 import simplejson.errors
+
+import threads
 from apis import *
 from settings import *
 from requests.structures import CaseInsensitiveDict
@@ -39,11 +41,11 @@ class AuthenticationBackend(QThread):
             codes for every work, the thread does """
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as file:
-                json_object = json.load(file)
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as file:
+            #     json_object = json.load(file)
 
-            device_unique_code = json_object["Device Unique Code"]
-            api_key = json_object["apiKey"]
+            device_unique_code = threads.UNIQUE_CODE["Device Unique Code"]
+            api_key = threads.UNIQUE_CODE["apiKey"]
 
             room_info_api_url = ROOM_INFO_API.format(device_unique_code=device_unique_code)
             device_request_url = DEVICE_REQUEST_API.format(device_unique_code=device_unique_code)
@@ -386,10 +388,10 @@ class AuthenticationWindow(QWidget):
         """ this method opens up the unique code.json file and then loads the device unique code for displaying in the
             authentication screen"""
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as file:
-            json_object = json.load(file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as file:
+        #     json_object = json.load(file)
 
-        device_unique_code = json_object["Device Unique Code"]
+        device_unique_code = threads.UNIQUE_CODE["Device Unique Code"]
         self.get_mac = device_unique_code
 
     def window_config(self):

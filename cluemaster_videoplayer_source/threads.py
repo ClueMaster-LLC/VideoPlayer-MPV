@@ -15,6 +15,7 @@ import os
 
 THREAD_INFO = None
 GAME_DETAILS = None
+UNIQUE_CODE = None
 
 class GameDetails(QThread):
 
@@ -31,10 +32,10 @@ class GameDetails(QThread):
             codes for every work, the thread does"""
         self.app_is_idle = True
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary = json.load(unique_code_json_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary = json.load(unique_code_json_file)
 
-        unique_code_response = initial_dictionary
+        unique_code_response = threads.UNIQUE_CODE
         device_unique_code = unique_code_response["Device Unique Code"]
         api_key = unique_code_response["apiKey"]
 
@@ -174,10 +175,10 @@ class ShutdownRestartRequest(QThread):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
             codes for every work, the thread does"""
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary = json.load(unique_code_json_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary = json.load(unique_code_json_file)
 
-        unique_code_response = initial_dictionary
+        unique_code_response = threads.UNIQUE_CODE
         unique_code = unique_code_response["Device Unique Code"]
         api_key = unique_code_response["apiKey"]
 
@@ -294,11 +295,11 @@ class UpdateRoomInfo(QThread):
         # watch for updates for video files
         video_files_old = None
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary = json.load(unique_code_json_file)
-        print(f'threads - loading unique code file on HDD')
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary = json.load(unique_code_json_file)
+        # print(f'threads - loading unique code file on HDD')
 
-        unique_code_response = initial_dictionary
+        unique_code_response = threads.UNIQUE_CODE
         device_unique_code = unique_code_response["Device Unique Code"]
         api_key = unique_code_response["apiKey"]
 
@@ -436,10 +437,10 @@ class GetGameClue(QThread):
         game_details_response = threads.GAME_DETAILS
         initial_gameId = game_details_response["gameId"]
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary = json.load(unique_code_json_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary = json.load(unique_code_json_file)
 
-        unique_code_response = initial_dictionary
+        unique_code_response = threads.UNIQUE_CODE
         device_unique_code = unique_code_response["Device Unique Code"]
         api_key = unique_code_response["apiKey"]
 
@@ -552,10 +553,10 @@ class GetTimerRequest(QThread):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
             codes for every work, the thread does"""
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary = json.load(unique_code_json_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary = json.load(unique_code_json_file)
 
-        unique_code_response = initial_dictionary
+        unique_code_response = threads.UNIQUE_CODE
         device_unique_code = unique_code_response["Device Unique Code"]
         api_key = unique_code_response["apiKey"]
 
@@ -657,10 +658,10 @@ class DownloadConfigs(QThread):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
             codes for every work, the thread does"""
 
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary = json.load(unique_code_json_file)
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary = json.load(unique_code_json_file)
 
-        unique_code_response = initial_dictionary
+        unique_code_response = threads.UNIQUE_CODE
         unique_code = unique_code_response["Device Unique Code"]
         api_key = unique_code_response["apiKey"]
 

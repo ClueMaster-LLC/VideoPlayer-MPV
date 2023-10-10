@@ -43,9 +43,11 @@ class LoadingBackend(QThread):
         # time.sleep(15)
 
         try:
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-                json_object = json.load(unique_code_json_file)
-                print(">>> Loading_Screen output - Loading unique_code.json file from HDD")
+            # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+            #     json_object = json.load(unique_code_json_file)
+            #     print(">>> Loading_Screen output - Loading unique_code.json file from HDD")
+
+            json_object = threads.UNIQUE_CODE
 
             device_unique_code = json_object["Device Unique Code"]
             api_key = json_object["apiKey"]
@@ -62,7 +64,7 @@ class LoadingBackend(QThread):
                 get_video_player_files_api = requests.get(get_video_player_files_url, headers=headers)
                 get_video_player_files_api.raise_for_status()
 
-                print("loading_screen - API Response: ", get_video_player_files_api.content.decode("utf-8"))
+                # print("loading_screen - API Response: ", get_video_player_files_api.content.decode("utf-8"))
 
                 if get_video_player_files_api.content.decode("utf-8") != "No Media Files Found":
                     # checking responses of room info api, if response is not No Configurations Files Found, then

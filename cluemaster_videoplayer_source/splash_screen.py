@@ -47,6 +47,7 @@ class SplashBackend(QThread):
         # default variables
         self.var_skip_authentication = None
         self.is_killed = False
+        self.unique_code_file = os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")
 
     def run(self):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
@@ -68,12 +69,15 @@ class SplashBackend(QThread):
             # if the directory already exists then pass
             pass
 
-        if os.path.isfile(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")):
+        if os.path.isfile(self.unique_code_file):
             # checking if unique code.json file exists in the application data directory, if yes then get the unique
             # device id and check if there are any device files for it
 
-            with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+            with open(self.unique_code_file) as unique_code_json_file:
                 json_object_of_unique_code_file = json.load(unique_code_json_file)
+
+            # Load the Unique Device key into memory for the first time
+            threads.UNIQUE_CODE = json_object_of_unique_code_file
 
             device_unique_code = json_object_of_unique_code_file["Device Unique Code"]
             api_key = json_object_of_unique_code_file["apiKey"]
@@ -97,8 +101,10 @@ class SplashBackend(QThread):
 
                     json_object_of_unique_code_file["IPv4 Address"] = main.ipv4
 
-                    with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as unique_code_json_file:
+                    with open(self.unique_code_file, "w") as unique_code_json_file:
                         json.dump(json_object_of_unique_code_file, unique_code_json_file)
+
+                    threads.UNIQUE_CODE = json_object_of_unique_code_file
 
                 except requests.exceptions.ConnectionError:
                     # if api call is facing connection error, jump to loading screen
@@ -154,8 +160,11 @@ class SplashBackend(QThread):
 
             json_object = {"Device Unique Code": full_unique_code, "apiKey": api_key, "IPv4 Address": main.ipv4}
             try:
-                with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json"), "w") as file:
+                with open(self.unique_code_file, "w") as file:
                     json.dump(json_object, file)
+
+                threads.UNIQUE_CODE = json_object
+
             except Exception as error:
                 print(f'splash_screen - Error = {error}')
 
@@ -267,7 +276,7 @@ class SplashWindow(QWidget):
 
         self.main_layout = QVBoxLayout()
 
-        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_file:
+        # with open(self.unique_code_file) as unique_code_file:
         #     unique_code_json_response = json.load(unique_code_file)
 
         application_name = QLabel(self)

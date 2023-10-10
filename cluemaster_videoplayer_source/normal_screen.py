@@ -62,9 +62,11 @@ class CheckTimerRequestThread(QThread):
     def run(self):
 
         # fetching device key and api key
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary_of_unique_code = json.load(unique_code_json_file)
-            print(f'Checking HDD again for unique_code.json')
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary_of_unique_code = json.load(unique_code_json_file)
+        #     print(f'Checking HDD again for unique_code.json')
+
+        initial_dictionary_of_unique_code = threads.UNIQUE_CODE
 
         self.device_id = initial_dictionary_of_unique_code["Device Unique Code"]
         self.api_key = initial_dictionary_of_unique_code["apiKey"]
@@ -343,9 +345,11 @@ class NormalWindow(QMainWindow):
         self.is_resume_game_response_received = False
 
         # opening unique code json file and declaring api variables
-        with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
-            initial_dictionary_of_unique_code = json.load(unique_code_json_file)
-        print(f'normal_screen - Checking HDD for unique_code_file')
+        # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
+        #     initial_dictionary_of_unique_code = json.load(unique_code_json_file)
+        # print(f'normal_screen - Checking HDD for unique_code_file')
+
+        initial_dictionary_of_unique_code = threads.UNIQUE_CODE
 
         self.device_id = initial_dictionary_of_unique_code["Device Unique Code"]
         self.api_key = initial_dictionary_of_unique_code["apiKey"]
