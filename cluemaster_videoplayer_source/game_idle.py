@@ -261,6 +261,7 @@ class GameIdle(QMainWindow):
             else:
                 print(f"game_idle - No videos found in folder. Nothing to play.")
                 self.setStyleSheet("background-color:#191F26;")
+                self.no_media()
 
         except json.decoder.JSONDecodeError:
             # if the code inside the try block faces json decode error, then pass
@@ -270,6 +271,50 @@ class GameIdle(QMainWindow):
             # if the code inside the try block faces simplejson decode error then pass
             pass
 
+    def no_media(self):
+
+        self.main_layout = QVBoxLayout()
+
+        font = QFont("IBM Plex Mono", 19)
+
+        application_name = QLabel(self)
+        application_name.setFont(font)
+        application_name.setText("ClueMaster Video Player")
+        application_name.setStyleSheet("color: white; font-size: 30px; font-weight: 700;")
+
+        screensize_txt = QLabel(self)
+        screensize_txt.setText(f"Screen Size: {self.screen_width} X {self.screen_height}")
+        screensize_txt.setFont(font)
+        screensize_txt.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
+        screensize_txt.setGeometry(200, 400, 1000, 200)
+        screensize_txt.show()
+
+        message = QLabel(self)
+        message.setFont(font)
+        message.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
+        message.setText("Idle Screen: No Media Files Found")
+        message.setGeometry(200, 200, 1000, 200)
+        message.show()
+
+
+        gif = QMovie(os.path.join(ROOT_DIRECTORY, "assets/icons/security_loading.gif"))
+        gif.start()
+
+        loading_gif = QLabel(self)
+        loading_gif.setMovie(gif)
+        loading_gif.setGeometry(self.screen_width // 2, self.screen_height // 2, 1000, 200)
+        loading_gif.show()
+
+        self.main_layout.addSpacing(self.height() // 9)
+        self.main_layout.addWidget(application_name, alignment=Qt.AlignCenter)
+        self.main_layout.addSpacing(10)
+        self.main_layout.addWidget(screensize_txt, alignment=Qt.AlignCenter)
+        self.main_layout.addSpacing(10)
+        self.main_layout.addWidget(message, alignment=Qt.AlignCenter)
+        self.main_layout.addStretch(1)
+        self.main_layout.addWidget(loading_gif, alignment=Qt.AlignCenter)
+
+        self.setLayout(self.main_layout)
 
     def restart_device(self):
         """ this method is triggered as soon as the restart signal is emitted by the shutdown restart thread"""
