@@ -281,19 +281,21 @@ class GameIdle(QMainWindow):
         application_name.setFont(font)
         application_name.setText("ClueMaster Video Player")
         application_name.setStyleSheet("color: white; font-size: 30px; font-weight: 700;")
+        application_name.setGeometry(self.screen_width // 2, 100, 1000, 100)
+        application_name.show()
 
         screensize_txt = QLabel(self)
         screensize_txt.setText(f"Screen Size: {self.screen_width} X {self.screen_height}")
         screensize_txt.setFont(font)
-        screensize_txt.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
-        screensize_txt.setGeometry(200, 400, 1000, 200)
+        screensize_txt.setStyleSheet("color: white; font-size: 40px; font-weight:bold;")
+        screensize_txt.setGeometry(self.screen_width // 2, 200, 1000, 100)
         screensize_txt.show()
 
         message = QLabel(self)
         message.setFont(font)
-        message.setStyleSheet("color: white; font-size: 19px; font-weight:bold;")
+        message.setStyleSheet("color: white; font-size: 20px; font-weight:bold;")
         message.setText("Idle Screen: No Media Files Found")
-        message.setGeometry(200, 200, 1000, 200)
+        message.setGeometry(self.screen_width // 2, 300, 1000, 100)
         message.show()
 
 
