@@ -35,6 +35,7 @@ def fetch_ipv4_device_address():
         i_socket.close()
         print(">>> auto_startup - Device IP Address: " + ip_address)
         main.ipv4 = ip_address
+        threads.IP_ADDRESS = ip_address
     return ip_address
 
 

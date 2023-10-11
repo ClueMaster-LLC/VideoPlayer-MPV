@@ -16,6 +16,7 @@ import os
 THREAD_INFO = None
 GAME_DETAILS = None
 UNIQUE_CODE = None
+IP_ADDRESS = None
 
 class GameDetails(QThread):
 
@@ -44,6 +45,7 @@ class GameDetails(QThread):
 
         game_details_url = GAME_DETAILS_API.format(device_unique_code)
 
+
         while True:
             try:
                 # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/ThreadInfo.json")) as thread_file:
@@ -59,9 +61,9 @@ class GameDetails(QThread):
                 else:
                     return
 
-                print(">>> Console output - Game Details")
                 response = requests.get(game_details_url, headers=headers)
                 response.raise_for_status()
+
                 print(">>> Console output - Is App Idle - ", self.app_is_idle)
 
                 if self.app_is_idle is True and response.status_code == 401:
@@ -74,6 +76,8 @@ class GameDetails(QThread):
                 else:
                     response = response.json()
                     game_status = response["gameStatus"]
+                    # print(f">>> Console output - Game Details: {response}")
+
                     # clue_used = response["noOfCluesUsed"]
 
                     # if clue_used is None:

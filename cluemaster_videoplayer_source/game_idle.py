@@ -298,6 +298,13 @@ class GameIdle(QMainWindow):
         message.setGeometry(self.screen_width // 2, 300, 1000, 100)
         message.show()
 
+        ipaddress = QLabel(self)
+        ipaddress.setFont(font)
+        ipaddress.setStyleSheet("color: white; font-size: 20px; font-weight:bold;")
+        ipaddress.setText(f"IP Address: {threads.IP_ADDRESS}")
+        ipaddress.setGeometry(self.screen_width // 2, 400, 1000, 100)
+        ipaddress.show()
+
 
         gif = QMovie(os.path.join(ROOT_DIRECTORY, "assets/icons/security_loading.gif"))
         gif.start()
