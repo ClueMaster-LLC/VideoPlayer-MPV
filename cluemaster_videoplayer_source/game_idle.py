@@ -78,6 +78,7 @@ class GameIdleMPVPlayer(QWidget):
 
         self.resize(self.screen_width, self.screen_height)
         self.setCursor(Qt.BlankCursor)
+        self.unsetCursor()
 
     def frontend(self):
         """ this method contains the codes for showing the video clue"""
