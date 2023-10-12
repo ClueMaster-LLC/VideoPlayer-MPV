@@ -317,7 +317,7 @@ class GameIdle(QMainWindow):
 
         loading_gif = QLabel(self)
         loading_gif.setMovie(gif)
-        loading_gif.setGeometry(self.screen_width // 2, self.screen_height - 200, 1000, 200)
+        loading_gif.setGeometry(self.screen_width // 3, self.screen_height - 200, 1000, 200)
         loading_gif.show()
 
         self.main_layout.addSpacing(self.height() // 9)
