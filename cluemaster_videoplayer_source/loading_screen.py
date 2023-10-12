@@ -192,10 +192,10 @@ class LoadingBackend(QThread):
                     #         "IsFailVideo": response_of_get_video_player_files_api.json()["IsFailVideo"],
                     #         "IsSuccessVideo": response_of_get_video_player_files_api.json()["IsSuccessVideo"]}
 
-                    data = {"VideoMediaFiles": response_of_get_video_player_files_api.json()["VideoMediaFiles"]}
+                    # data = {"VideoMediaFiles": response_of_get_video_player_files_api.json()["VideoMediaFiles"]}
 
-                    with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device_configurations.json"), "w") as file:
-                        json.dump(data, file)
+                    # with open(os.path.join(MASTER_DIRECTORY, "assets/application data", "device_configurations.json"), "w") as file:
+                    #     json.dump(data, file)
 
                     time.sleep(5)
                     print(">> loading_screen - Finished Loading")

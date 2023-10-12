@@ -84,7 +84,7 @@ class GameIdleMPVPlayer(QWidget):
 
         # adding file to mpv playlist
         try:
-            print(f'>>> game_idle - PlayList Files: {self.playlist_files}')
+            print(f'>>> game_idle - Adding PlayList Files: {self.playlist_files}')
             for file in self.playlist_files:
                 # if file.endswith(".mp4") or file.endswith(".mkv") or file.endswith(".mpg") or file.endswith(".mpeg") or file.endswith(".m4v"):
                 # print(">>> File appended to playlist - ", file)
@@ -135,7 +135,7 @@ class GameIdle(QMainWindow):
         self.app_root = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.media_folder = None
         self.filtered_usb_files = None
-        self.clue_media = None
+        self.video_media = None
         self.external_master_mpv_players = None
         self.media_assets_location = None
 
@@ -240,13 +240,13 @@ class GameIdle(QMainWindow):
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/room data/intro media/"))[0]))
                 # self.media_assets_location = os.path.join(MASTER_DIRECTORY, "assets/clue medias/{}".format(os.listdir(os.path.join(MASTER_DIRECTORY, "assets/clue medias/"))[0]))
 
-                self.clue_media = os.path.join(MASTER_DIRECTORY, "assets/media/")
-                self.media_assets_location = ([self.clue_media + file for file in os.listdir(self.clue_media)])
+                self.video_media = os.path.join(MASTER_DIRECTORY, "assets/media/")
+                self.media_assets_location = ([self.video_media + file for file in os.listdir(self.video_media)])
 
                 if self.filtered_usb_files:
                     self.media_assets_location = self.media_assets_location + self.filtered_usb_files
 
-                print(">>> Console output - Media Files ", self.media_assets_location)
+                print(">>> game_idle - Media Files: ", self.media_assets_location)
 
                 try:
                     self.mpv_player_triggered = True
@@ -280,31 +280,37 @@ class GameIdle(QMainWindow):
         application_name = QLabel(self)
         application_name.setFont(font)
         application_name.setText("ClueMaster Video Player")
-        application_name.setStyleSheet("color: white; font-size: 30px; font-weight: 700;")
+        application_name.setStyleSheet("color: white; font-size: 40px; font-weight: 700;")
         application_name.setGeometry(self.screen_width // 2, 100, 1000, 100)
         application_name.show()
 
         screensize_txt = QLabel(self)
         screensize_txt.setText(f"Screen Size: {self.screen_width} X {self.screen_height}")
         screensize_txt.setFont(font)
-        screensize_txt.setStyleSheet("color: white; font-size: 40px; font-weight:bold;")
+        screensize_txt.setStyleSheet("color: white; font-size: 60px; font-weight:bold;")
         screensize_txt.setGeometry(self.screen_width // 2, 200, 1000, 100)
         screensize_txt.show()
 
         message = QLabel(self)
         message.setFont(font)
-        message.setStyleSheet("color: white; font-size: 20px; font-weight:bold;")
+        message.setStyleSheet("color: white; font-size: 30px; font-weight:bold;")
         message.setText("Idle Screen: No Media Files Found")
         message.setGeometry(self.screen_width // 2, 300, 1000, 100)
         message.show()
 
         ipaddress = QLabel(self)
         ipaddress.setFont(font)
-        ipaddress.setStyleSheet("color: white; font-size: 20px; font-weight:bold;")
+        ipaddress.setStyleSheet("color: white; font-size: 30px; font-weight:bold;")
         ipaddress.setText(f"IP Address: {threads.IP_ADDRESS}")
         ipaddress.setGeometry(self.screen_width // 2, 400, 1000, 100)
         ipaddress.show()
 
+        devicekey = QLabel(self)
+        devicekey.setFont(font)
+        devicekey.setStyleSheet("color: white; font-size: 30px; font-weight:bold;")
+        devicekey.setText(f"Device Key: {self.device_unique_code}")
+        devicekey.setGeometry(self.screen_width // 2, 450, 1000, 100)
+        devicekey.show()
 
         gif = QMovie(os.path.join(ROOT_DIRECTORY, "assets/icons/security_loading.gif"))
         gif.start()

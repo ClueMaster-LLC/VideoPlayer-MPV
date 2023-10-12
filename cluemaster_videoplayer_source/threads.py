@@ -296,9 +296,6 @@ class UpdateRoomInfo(QThread):
         """ this is an autorun method which is triggered as soon as the thread is started, this method holds all the
             codes for every work, the thread does"""
 
-        # watch for updates for video files
-        video_files_old = None
-
         # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/unique_code.json")) as unique_code_json_file:
         #     initial_dictionary = json.load(unique_code_json_file)
         # print(f'threads - loading unique code file on HDD')
@@ -344,18 +341,11 @@ class UpdateRoomInfo(QThread):
                 #               "IsFailVideo": response_of_room_info_api.json()["IsFailVideo"],
                 #               "IsSuccessVideo": response_of_room_info_api.json()["IsSuccessVideo"]}
 
-                dictionary = {"VideoMediaFiles": response_of_get_video_player_files_api.json()["VideoMediaFiles"]}
+                # dictionary = {"VideoMediaFiles": response_of_get_video_player_files_api.json()["VideoMediaFiles"]}
+
+
 
                 # TODO: FIND CHANGES
-                # video_files_new = dictionary
-                #
-                # if video_files_new != video_files_old:
-                #     print("do something now")
-                #     video_files_old = dictionary
-                # else:
-                #     print("Nothing changed")
-                #     video_files_old = dictionary
-
 
                 # TODO: change to in memory for less hdd writing. use new vs old values for change detection
                 # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json"), "w") as device_config_json_file:
