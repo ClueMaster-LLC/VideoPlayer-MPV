@@ -320,16 +320,17 @@ class GameIdle(QMainWindow):
         loading_gif.setGeometry(self.screen_width // 3, self.screen_height - 200, 1000, 200)
         loading_gif.show()
 
-        self.main_layout.addSpacing(self.height() // 9)
-        self.main_layout.addWidget(application_name, alignment=Qt.AlignCenter)
-        self.main_layout.addSpacing(10)
-        self.main_layout.addWidget(screensize_txt, alignment=Qt.AlignCenter)
-        self.main_layout.addSpacing(10)
-        self.main_layout.addWidget(message, alignment=Qt.AlignCenter)
-        self.main_layout.addStretch(1)
-        self.main_layout.addWidget(loading_gif, alignment=Qt.AlignCenter)
-
-        self.setLayout(self.main_layout)
+        # TODO should we fix this to add to a new layer or above code is fine?
+        # self.main_layout.addSpacing(self.height() // 9)
+        # self.main_layout.addWidget(application_name, alignment=Qt.AlignCenter)
+        # self.main_layout.addSpacing(10)
+        # self.main_layout.addWidget(screensize_txt, alignment=Qt.AlignCenter)
+        # self.main_layout.addSpacing(10)
+        # self.main_layout.addWidget(message, alignment=Qt.AlignCenter)
+        # self.main_layout.addStretch(1)
+        # self.main_layout.addWidget(loading_gif, alignment=Qt.AlignCenter)
+        #
+        # self.setLayout(self.main_layout)
 
     def restart_device(self):
         """ this method is triggered as soon as the restart signal is emitted by the shutdown restart thread"""
