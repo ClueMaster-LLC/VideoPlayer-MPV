@@ -64,19 +64,19 @@ class GameDetails(QThread):
                 response = requests.get(game_details_url, headers=headers)
                 response.raise_for_status()
 
-                print(">>> Console output - Is App Idle - ", self.app_is_idle)
+                print(">>> threads.py - Is App Idle - ", self.app_is_idle)
 
                 if self.app_is_idle is True and response.status_code == 401:
-                    print(">>> Console output - Device No longer authorized...")
+                    print(">>> threads.py - Device No longer authorized...")
                     self.deviceIDcorrupted.emit()
 
                 elif response.status_code != 200:
-                    print(">>> Console output - API Response not 200")
+                    print(">>> threads.py - API Response not 200")
                     pass
                 else:
                     response = response.json()
                     game_status = response["gameStatus"]
-                    # print(f">>> Console output - Game Details: {response}")
+                    # print(f">>> threads.py - Game Details: {response}")
 
                     # clue_used = response["noOfCluesUsed"]
 
@@ -205,7 +205,7 @@ class ShutdownRestartRequest(QThread):
                 else:
                     return
 
-                print(">>> Console output - Shutdown restart response")
+                print(">>> threads.py - Shutdown restart response")
                 json_response = requests.get(shutdown_restart_api, headers=headers)
                 json_response.raise_for_status()
 
@@ -252,9 +252,9 @@ class ShutdownRestartRequest(QThread):
                     if thread_file_response["ResettingGame"] is True:
                         pass
                     else:
-                        print(">>> Console output - API Token Expired (Shutdown Restart)")
+                        print(">>> threads.py - API Token Expired (Shutdown Restart)")
                 else:
-                    print(">> Console output - Not a 401 error")
+                    print(">>> Console output - Not a 401 error")
 
             except FileNotFoundError:
                 # if the code faces the FilNotFoundError then pass
@@ -323,7 +323,7 @@ class UpdateRoomInfo(QThread):
                 else:
                     return
 
-                print(">>> Console output - Checking for Video Player Files Changes")
+                print(">>> threads.py - Checking for Video Player Files Changes")
                 response_of_get_video_player_files_api = requests.get(get_video_player_files_api, headers=headers)
                 response_of_get_video_player_files_api.raise_for_status()
 
@@ -375,9 +375,9 @@ class UpdateRoomInfo(QThread):
                     if thread_file_response["ResettingGame"] is True:
                         pass
                     else:
-                        print(">>> Console output - API Token Expired (UpdateRoomInfo)")
+                        print(">>> threads.py - API Token Expired (UpdateRoomInfo)")
                 else:
-                    print(">> Console output - Not a 401 error")
+                    print(f">>> threads.py - Not a {request_error}")
 
             except PermissionError:
                 # application update detected
@@ -457,7 +457,7 @@ class GetGameClue(QThread):
                 else:
                     return
 
-                print(">>> Console output - Checking for New Clue response")
+                print(">>> threads.py - Checking for New Clue response")
                 json_response = requests.get(game_clue_url, headers=headers)
                 json_response.raise_for_status()
                 gameClueId = json_response.json()["gameClueId"]
@@ -494,9 +494,9 @@ class GetGameClue(QThread):
                     if thread_file_response["ResettingGame"] is True:
                         pass
                     else:
-                        print(">>> Console output - API Token Expired (GetGameClue)")
+                        print(">>> threads.py - API Token Expired (GetGameClue)")
                 else:
-                    print(">> Console output - Not a 401 error")
+                    print(">>> threads.py - Not a 401 error")
 
             except KeyError:
                 # if the code inside the try block faces KeyError, then pass
@@ -573,7 +573,7 @@ class GetTimerRequest(QThread):
                 else:
                     return
 
-                print(">>> Console output - Timer response")
+                print(">>> threads.py - Timer response")
                 response = requests.get(get_timer_request_api, headers=headers)
                 response.raise_for_status()
 
@@ -607,9 +607,9 @@ class GetTimerRequest(QThread):
                     if thread_file_response["ResettingGame"] is True:
                         pass
                     else:
-                        print(">>> Console output - API Token Expired (GetTimeRequest)")
+                        print(">>> threads.py - API Token Expired (GetTimeRequest)")
                 else:
-                    print(">> Console output - Not a 401 error")
+                    print(">>> threads.py - Not a 401 error")
 
             else:
                 # if no error then
@@ -677,7 +677,7 @@ class DownloadConfigs(QThread):
                 else:
                     return
 
-                print(">>> Console Output - Download config response")
+                print(">>> threads.py - Download config response")
                 response = requests.get(download_files_request_api, headers=headers)
                 response.raise_for_status()
                 request_id = response.json()["DeviceRequestid"]
@@ -711,9 +711,9 @@ class DownloadConfigs(QThread):
                     if thread_file_response["ResettingGame"] is True:
                         pass
                     else:
-                        print(">>> Console output - API Token Expired (DownloadConfigs)")
+                        print(">>> threads.py - API Token Expired (DownloadConfigs)")
                 else:
-                    print(">> Console output - Not a 401 error")
+                    print(">>> threads.py - Not a 401 error")
 
             except FileNotFoundError:
                 # if the code faces the FilNotFoundError then pass

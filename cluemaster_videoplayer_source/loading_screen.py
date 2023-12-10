@@ -155,7 +155,7 @@ class LoadingBackend(QThread):
 
                     except requests.exceptions.ConnectionError:
                         # if the code inside the try block faces connection error while making api calls, pass
-                        # print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
+                        print(f'loading_screen - No Connection to Internet. Skipping to idle screen.')
                         self.msg_no_internet.emit()
                         time.sleep(5)
                         self.proceed.emit(True)
@@ -173,7 +173,10 @@ class LoadingBackend(QThread):
                         if "401 Client Error" in str(request_error):
                             self.check_api_token_status()
                         else:
-                            print(">> Console output - Not a 401 error")
+                            print(f">>> loading_screen.py - {request_error}")
+                            time.sleep(5)
+                            self.proceed.emit(True)
+                            pass
 
                     # emit downloading configurations signal
                     self.downloading_configurations.emit()
@@ -235,7 +238,13 @@ class LoadingBackend(QThread):
             if "401 Client Error" in str(request_error):
                 self.check_api_token_status()
             else:
-                print(">> Console output - Not a 401 error")
+                print(f">>> loading_screen.py - {request_error}")
+                self.msg_no_internet.emit()
+                time.sleep(5)
+                print(f'loading_screen - API Error. Skipping to idle screen.')
+
+                self.proceed.emit(True)
+                self.stop()
 
     def check_api_token_status(self):
         if self.registering_device is False:
