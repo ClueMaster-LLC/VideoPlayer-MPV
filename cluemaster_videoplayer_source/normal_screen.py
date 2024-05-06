@@ -1035,6 +1035,13 @@ class NormalWindow(QMainWindow):
                     self.master_picture_displayer.loop = True
                     self.master_picture_displayer.play(default)
 
+                elif (default.endswith(".m4v") or default.endswith(".mp4") or default.endswith(".mkv") or
+                        default.endswith(".avi") or default.endswith(".mov") or default.endswith(".mpg") or
+                        default.endswith(".mpeg")):
+                    self.master_video_player.loop = True
+                    self.master_video_player.play(default)
+                    self.master_video_player.register_event_callback(self.track_master_video_player)
+
                 elif default.endswith(".svg"):
 
                     self.master_animated_svg_renderer = QSvgWidget(default)
