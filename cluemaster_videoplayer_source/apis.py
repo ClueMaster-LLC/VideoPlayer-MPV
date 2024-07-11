@@ -1,6 +1,5 @@
 
-api_initial = "https://deviceapi.cluemaster.io"
-# dev-api_initial = "https://dev-deviceapi.cluemaster.io"
+api_initial = "https://dev-deviceapi.cluemaster.io"
 
 # master apis
 DEVICES_FILES_API = api_initial + "/api/Device/GetDeviceFiles/{device_unique_code}"
