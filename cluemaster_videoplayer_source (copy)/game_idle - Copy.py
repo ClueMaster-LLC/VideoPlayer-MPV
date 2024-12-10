@@ -1,5 +1,6 @@
 import sys
 import time
+
 import mpv
 import simplejson.errors
 from PyQt5.QtCore import *
@@ -19,8 +20,6 @@ with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs
     PLATFORM = json.load(platform_specs_file)["platform"]
 
 print(f"Game Idle Screen Loading")
-
-COMMAND = None
 
 
 class GameIdleMPVPlayer(QWidget):
@@ -170,6 +169,7 @@ class GameIdle(QMainWindow):
 
     def frontend(self):
         """this method sets the available background image to the window as the central widget"""
+
         try:
             # with open(os.path.join(MASTER_DIRECTORY, "assets/application data/device_configurations.json"))
             # as configurations_json_file:

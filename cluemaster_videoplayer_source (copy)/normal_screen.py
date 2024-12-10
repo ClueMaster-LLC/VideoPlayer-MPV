@@ -482,9 +482,9 @@ class NormalWindow(QMainWindow):
 
         self.game_details_thread.start()
         self.game_details_thread.deviceIDcorrupted.connect(self.force_authenticate_device)
-        # self.game_details_thread.apiStatus.connect(self.verify_status_of_game_details_api)
+        self.game_details_thread.apiStatus.connect(self.verify_status_of_game_details_api)
         self.game_details_thread.update_detected.connect(self.restart_device)
-        # self.game_details_thread.statusUpdated.connect(self.verify_game_status)
+        self.game_details_thread.statusUpdated.connect(self.verify_game_status)
         self.game_details_thread.custom_game_status.connect(self.complete_game_shutdown)
 
         self.download_files_request.start()
@@ -516,9 +516,6 @@ class NormalWindow(QMainWindow):
 
     def verify_game_status(self, game_status):
         """ this method is called every 4 to 5 seconds to verify latest game status"""
-
-        # game_status = 1
-        # self.is_game_in_progress = True
         print(f">>> normal_screen - Game Status: {game_status}")
 
         if game_status == 1:
