@@ -65,7 +65,7 @@ parts:
       - mpv
       - ffmpeg
     stage:
-      - -usr/share/alsa/alsa.conf
+      - -usrshare/alsa/alsa.conf
       - -usr/share/alsa/cards/HDA-Intel.conf
       - -usr/share/alsa/cards/USB-Audio.conf
       - -usr/share/alsa/cards/aliases.conf
@@ -85,8 +85,8 @@ parts:
       - -usr/share/alsa/pcm/surround50.conf
       - -usr/share/alsa/pcm/surround51.conf
       - -usr/share/alsa/pcm/surround71.conf
-   
-   install-python:
+
+  install-python:
     plugin: nil
     source: .
     stage-packages:
@@ -96,7 +96,7 @@ parts:
     override-build: |
       snapcraftctl build
       python3 -m pip install --upgrade pip
-    
+      
   copy-source-code:
     #after: [desktop-qt5]
     plugin: dump
