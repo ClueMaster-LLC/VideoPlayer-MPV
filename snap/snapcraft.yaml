@@ -122,7 +122,7 @@ parts:
     plugin: python
     source: .
     build-packages:
-      - python
+      - python3 ~= 3.9
       - python3-pip
       - python3-dev
       - gcc
@@ -140,6 +140,9 @@ parts:
       - python-mpv == 0.5.2
     organize:
       usr/lib/*/samba/*: usr/lib/
+    override-build: |
+      snapcraftctl build
+      python3 -m pip install --upgrade pip
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
