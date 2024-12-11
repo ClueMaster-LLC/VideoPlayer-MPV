@@ -57,8 +57,14 @@ slots:
   audio-playback:
 
 parts:
+  install-libmpv1:
+    plugin: nil
+    source: .
+    stage-packages:
+      - libmpv1
+    
   copy-source-code:
-    after: [desktop-qt5]
+    #after: [desktop-qt5]
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
@@ -71,7 +77,7 @@ parts:
       - locales
       - libvdpau1
       - i965-va-driver
-      - libmpv1
+      #- libmpv1
       - va-driver-all
       - vdpau-driver-all
       - mesa-va-drivers
@@ -122,7 +128,6 @@ parts:
     plugin: python
     source: .
     build-packages:
-      - python ~= 3.9
       - python3-pip
       - python3-dev
       - gcc
