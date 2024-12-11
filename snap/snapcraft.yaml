@@ -57,41 +57,13 @@ slots:
   audio-playback:
 
 parts:
-  install-libmpv1:
+  install-mpv:
     plugin: nil
     source: .
     stage-packages:
       - libmpv1
-    
-  copy-source-code:
-    #after: [desktop-qt5]
-    plugin: dump
-    source: cluemaster_videoplayer_source/
-    stage-packages:
-      - python3
-      - bash
-      - ffmpeg
-      - libass9
       - mpv
-      - alsa-base
-      - locales
-      - libvdpau1
-      - i965-va-driver
-      #- libmpv1
-      - va-driver-all
-      - vdpau-driver-all
-      - mesa-va-drivers
-      - libvdpau-va-gl1
-      - libglu1-mesa
-      - samba-libs
-      - git
-      - python3-dbus
-      - qtwayland5
-      - mesa-utils
-      - libgl1-mesa-dri
-      - python3-pyqt5.qtmultimedia
-      - libqt5multimedia5-plugins
-      - python3-pyqt5.qtsvg
+      - ffmpeg
     stage:
       - -usr/share/alsa/alsa.conf
       - -usr/share/alsa/cards/HDA-Intel.conf
@@ -113,6 +85,43 @@ parts:
       - -usr/share/alsa/pcm/surround50.conf
       - -usr/share/alsa/pcm/surround51.conf
       - -usr/share/alsa/pcm/surround71.conf
+   
+   install-python:
+    plugin: nil
+    source: .
+    stage-packages:
+      - python3
+      - python3-dbus
+      - pip
+    override-build: |
+      snapcraftctl build
+      python3 -m pip install --upgrade pip
+    
+  copy-source-code:
+    #after: [desktop-qt5]
+    plugin: dump
+    source: cluemaster_videoplayer_source/
+    stage-packages:
+      - bash
+      - libass9
+      - alsa-base
+      - locales
+      - libvdpau1
+      - i965-va-driver
+      - va-driver-all
+      - vdpau-driver-all
+      - mesa-va-drivers
+      - libvdpau-va-gl1
+      - libglu1-mesa
+      - samba-libs
+      - git
+      - qtwayland5
+      - mesa-utils
+      - libgl1-mesa-dri
+      - python3-pyqt5.qtmultimedia
+      - libqt5multimedia5-plugins
+      - python3-pyqt5.qtsvg
+    stage:
       - -usr/lib/x86_64-linux-gnu/libFLAC.so.8.3.0
       - -usr/share/doc/libflac8/changelog.Debian.gz
       - -README.md
@@ -145,9 +154,6 @@ parts:
       - python-mpv == 0.5.2
     organize:
       usr/lib/*/samba/*: usr/lib/
-    override-build: |
-      snapcraftctl build
-      python3 -m pip install --upgrade pip
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
