@@ -136,6 +136,7 @@ parts:
       #- git+https://github.com/ClueMaster-LLC/python-mpv
       - simplejson
       - psutil
+      - wheel
       - python-mpv == 0.5.2
     organize:
       usr/lib/*/samba/*: usr/lib/
