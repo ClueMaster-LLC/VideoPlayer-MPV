@@ -20,6 +20,7 @@ apps:
     command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3 $SNAP/main.py
     environment:
       DISABLE_WAYLAND: 1
+      # Added 12-11-2024 to test live print to log commands
       PYTHONUNBUFFERED: 1
 
   pulseaudio:
@@ -57,6 +58,7 @@ plugs:
 slots:
   audio-playback:
 
+parts:
   install-python:
     plugin: nil
     source: .
