@@ -57,13 +57,6 @@ plugs:
 slots:
   audio-playback:
 
-parts:
-  install-mpv:
-    plugin: nil
-    source: .
-    stage-packages:
-      - libmpv1
-
   install-python:
     plugin: nil
     source: .
@@ -80,6 +73,7 @@ parts:
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
+      - libmpv1
       - mpv
       - ffmpeg
       - bash
