@@ -61,8 +61,6 @@ slots:
 parts:
   python:
     plugin: python
-    requirements:
-      - requirements.txt
     source: .
     stage-packages:
       - python3.9-venv
