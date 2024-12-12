@@ -20,6 +20,7 @@ apps:
     command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3 $SNAP/main.py
     environment:
       DISABLE_WAYLAND: 1
+      PYTHONUNBUFFERED: 1
 
   pulseaudio:
     command: bin/pulseaudio
@@ -62,8 +63,6 @@ parts:
     source: .
     stage-packages:
       - libmpv1
-      - mpv
-      - ffmpeg
 
   install-python:
     plugin: nil
@@ -81,6 +80,8 @@ parts:
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
+      - mpv
+      - ffmpeg
       - bash
       - libass9
       - alsa-base
