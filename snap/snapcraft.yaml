@@ -1,5 +1,5 @@
 name: cluemaster-videoplayer-core
-base: core22
+base: core20
 version: '2024.12.10-DEVELOPMENT'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
@@ -59,6 +59,54 @@ slots:
   audio-playback:
 
 parts:
+  python:
+    plugin: autotools
+    source: https://www.python.org/ftp/python/3.9.8/Python-3.9.8.tgz
+    autotools-configure-parameters:
+      - --enable-optimizations
+    build-packages:
+      - build-essential
+      - gdb 
+      - lcov
+      - pkg-config
+      - libbz2-dev 
+      - libffi-dev 
+      - libgdbm-dev 
+      - libgdbm-compat-dev 
+      - liblzma-dev
+      - libncurses5-dev
+      - libreadline6-dev
+      - libsqlite3-dev
+      - libssl-dev
+      - lzma
+      - lzma-dev 
+      - tk-dev 
+      - uuid-dev 
+      - zlib1g-dev
+    override-stage: |
+      snapcraftctl stage
+      [ ! -d "${SNAPCRAFT_STAGE}/bin" ] && mkdir ${SNAPCRAFT_STAGE}/bin
+      ln -s ../usr/local/bin/python3.9 "${SNAPCRAFT_STAGE}/bin/python3.9"
+      ln -s ../usr/local/bin/python3.9 "${SNAPCRAFT_STAGE}/usr/bin/python3"
+    stage-packages:
+      - libfontconfig1
+      - libfreetype6
+      - libgdbm-compat4
+      - libgdbm6
+      - libpng16-16
+      - libtcl8.6
+      - libtk8.6
+      - libx11-6
+      - libxau6
+      - libxcb1
+      - libxdmcp6
+      - libxext6
+      - libxft2
+      - libxrender1
+      - libxss1
+    build-environment:
+      - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
+      
   install-python:
     plugin: nil
     source: .
