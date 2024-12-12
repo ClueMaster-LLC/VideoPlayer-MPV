@@ -1,5 +1,5 @@
 name: cluemaster-videoplayer-core
-base: core20 
+base: core22
 version: '2024.12.10-DEVELOPMENT'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
@@ -68,6 +68,7 @@ parts:
       - pip
     override-build: |
       snapcraftctl build
+      sudo apt-get update && sudo apt-get upgrade
       python3 -m pip install --upgrade pip
       
   copy-source-code:
