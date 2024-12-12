@@ -60,67 +60,28 @@ slots:
 
 parts:
   python:
-    plugin: autotools
-    source: https://www.python.org/ftp/python/3.9.8/Python-3.9.8.tgz
-    autotools-configure-parameters:
-      - --enable-optimizations
-    build-packages:
-      - build-essential
-      - gdb 
-      - lcov
-      - pkg-config
-      - libbz2-dev 
-      - libffi-dev 
-      - libgdbm-dev 
-      - libgdbm-compat-dev 
-      - liblzma-dev
-      - libncurses5-dev
-      - libreadline6-dev
-      - libsqlite3-dev
-      - libssl-dev
-      - lzma
-      - lzma-dev 
-      - tk-dev 
-      - uuid-dev 
-      - zlib1g-dev
-    override-stage: |
-      snapcraftctl stage
-      [ ! -d "${SNAPCRAFT_STAGE}/bin" ] && mkdir ${SNAPCRAFT_STAGE}/bin
-      ln -s ../usr/local/bin/python3.9 "${SNAPCRAFT_STAGE}/bin/python3.9"
-      ln -s ../usr/local/bin/python3.9 "${SNAPCRAFT_STAGE}/usr/bin/python3"
-    stage-packages:
-      - libfontconfig1
-      - libfreetype6
-      - libgdbm-compat4
-      - libgdbm6
-      - libpng16-16
-      - libtcl8.6
-      - libtk8.6
-      - libx11-6
-      - libxau6
-      - libxcb1
-      - libxdmcp6
-      - libxext6
-      - libxft2
-      - libxrender1
-      - libxss1
-    build-environment:
-      - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
-      
-  install-python:
-    plugin: nil
+    plugin: python
+    requirements:
+      - requirements.txt
     source: .
     stage-packages:
-      #- python3
-      - python3-dbus
-      - pip
+      - python3.9-venv
+    build-packages:
+      - python3.9-venv
+      - python3.9-dev
+    build-environment:
+      - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
     override-build: |
+      # Workaround a bug in snapcraft python plugin
+      # https://forum.snapcraft.io/t/build-a-snap-with-any-version-of-python-i-want/10420/8
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
+      ln -s /usr/lib/python3.9/distutils $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/include/
+      ln -s /usr/include/python3.9 $SNAPCRAFT_PART_INSTALL/usr/include/python3.9
       snapcraftctl build
-      sudo apt-get update && sudo apt-get upgrade
-      python3 -m pip install --upgrade pip
       
   copy-source-code:
-    #after: [desktop-qt5]
+    after: [desktop-qt5]
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
@@ -182,8 +143,11 @@ parts:
     plugin: python
     source: .
     build-packages:
+      - python3.9-venv
+      - python3.9-dev
       - python3-pip
       - python3-dev
+      - python3-dbus
       - gcc
       - build-essential
       - python3-wheel
@@ -191,12 +155,13 @@ parts:
     stage-packages:
       - libpq5
     python-packages:
+      - pip
       - PyQt5 ~= 5.14.1
       - requests
       #- git+https://github.com/ClueMaster-LLC/python-mpv
       - simplejson
       - psutil
-      - python-mpv == 0.5.2
+      - python-mpv ~= 0.5.2
     organize:
       usr/lib/*/samba/*: usr/lib/
 
