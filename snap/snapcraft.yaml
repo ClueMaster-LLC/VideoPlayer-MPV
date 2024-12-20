@@ -136,6 +136,7 @@ parts:
       - git+https://github.com/ClueMaster-LLC/python-mpv
       - simplejson
       - psutil
+      - websockets
     organize:
       usr/lib/*/samba/*: usr/lib/
 
