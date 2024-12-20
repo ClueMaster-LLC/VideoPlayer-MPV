@@ -1,5 +1,5 @@
 name: cluemaster-videoplayer-core
-base: core20
+base: core20 
 version: '2024.12.19-DEVELOPMENT'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
@@ -17,11 +17,9 @@ apps:
     restart-condition: always
     command-chain:
       - env-setup
-    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3.9 $SNAP/main.py
+    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3 $SNAP/main.py
     environment:
       DISABLE_WAYLAND: 1
-      # Added 12-11-2024 to test live print to log commands
-      PYTHONUNBUFFERED: 1
 
   pulseaudio:
     command: bin/pulseaudio
@@ -59,67 +57,21 @@ slots:
   audio-playback:
 
 parts:
-  python:
-    plugin: python
-    source: .
-    stage-packages:
-      - python3.9-venv
-    build-packages:
-      - python3.9-venv
-      - python3.9-dev
-      - python3-pip
-      - python3-dev
-      - python3-dbus
-      - gcc
-      - build-essential
-      - python3-wheel
-      - libpq-dev
-      
-    python-packages:
-      - pip
-      - PyQt5 ~= 5.14.1
-      - requests
-      #- git+https://github.com/ClueMaster-LLC/python-mpv
-      - simplejson
-      - psutil
-      - python-mpv ~= 0.5.2
-    organize:
-      usr/lib/*/samba/*: usr/lib/
-    stage:
-      - -bin/activate
-      - -bin/activate.csh
-      - -bin/activate.fish
-      - -bin/pip
-      - -bin/pip3
-      - -bin/python
-      - -bin/python3
-      - -pyvenv.cfg
-      
-    build-environment:
-      - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
-    override-build: |
-      # Workaround a bug in snapcraft python plugin
-      # https://forum.snapcraft.io/t/build-a-snap-with-any-version-of-python-i-want/10420/8
-      rm -rf $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
-      cp -r /usr/lib/python3.9/distutils $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/include/
-      cp -r /usr/include/python3.9 $SNAPCRAFT_PART_INSTALL/usr/include/python3.9
-      snapcraftctl build
-      
   copy-source-code:
     after: [desktop-qt5]
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
-      - libmpv1
-      - mpv
-      - ffmpeg
+      - python3
       - bash
+      - ffmpeg
       - libass9
+      - mpv
       - alsa-base
       - locales
       - libvdpau1
       - i965-va-driver
+      - libmpv1
       - va-driver-all
       - vdpau-driver-all
       - mesa-va-drivers
@@ -127,6 +79,7 @@ parts:
       - libglu1-mesa
       - samba-libs
       - git
+      - python3-dbus
       - qtwayland5
       - mesa-utils
       - libgl1-mesa-dri
@@ -169,11 +122,8 @@ parts:
     plugin: python
     source: .
     build-packages:
-      - python3.9-venv
-      - python3.9-dev
       - python3-pip
       - python3-dev
-      - python3-dbus
       - gcc
       - build-essential
       - python3-wheel
@@ -181,24 +131,13 @@ parts:
     stage-packages:
       - libpq5
     python-packages:
-      - pip
       - PyQt5 ~= 5.14.1
       - requests
-      #- git+https://github.com/ClueMaster-LLC/python-mpv
+      - git+https://github.com/ClueMaster-LLC/python-mpv
       - simplejson
       - psutil
-      - python-mpv ~= 0.5.2
     organize:
       usr/lib/*/samba/*: usr/lib/
-    stage:
-      - -bin/activate
-      - -bin/activate.csh
-      - -bin/activate.fish
-      - -bin/pip
-      - -bin/pip3
-      - -bin/python
-      - -bin/python3
-      - -pyvenv.cfg
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -420,4 +359,4 @@ layout:
     symlink: $SNAP/usr/share/alsa
   /usr/share/applications:
     bind: $SNAP/usr/share/applications
-
+    
