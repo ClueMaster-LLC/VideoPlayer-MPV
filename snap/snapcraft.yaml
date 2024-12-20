@@ -1,6 +1,6 @@
 name: cluemaster-videoplayer-core
 base: core20
-version: '2024.12.10-DEVELOPMENT'
+version: '2024.12.19-DEVELOPMENT'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
   ClueMaster Video Player is a Dynamic TV Display software for escape rooms.
@@ -17,7 +17,7 @@ apps:
     restart-condition: always
     command-chain:
       - env-setup
-    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3 $SNAP/main.py
+    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3.9 $SNAP/main.py
     environment:
       DISABLE_WAYLAND: 1
       # Added 12-11-2024 to test live print to log commands
