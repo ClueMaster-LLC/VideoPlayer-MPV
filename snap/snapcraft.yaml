@@ -59,25 +59,25 @@ slots:
   audio-playback:
 
 parts:
-  python:
-    plugin: python
-    source: .
-    stage-packages:
-      - python3.9-venv
-      - python3-requests
-    build-packages:
-      - python3.9-venv
-      - python3.9-dev
-    build-environment:
-      - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
-    override-build: |
-      # Workaround a bug in snapcraft python plugin
-      # https://forum.snapcraft.io/t/build-a-snap-with-any-version-of-python-i-want/10420/8
-      rm -rf $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
-      cp -r /usr/lib/python3.9/distutils $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/include/
-      cp -r /usr/include/python3.9 $SNAPCRAFT_PART_INSTALL/usr/include/python3.9
-      snapcraftctl build
+  # python:
+    # plugin: python
+    # source: .
+    # stage-packages:
+      # - python3.9-venv
+      # - python3-requests
+    # build-packages:
+      # - python3.9-venv
+      # - python3.9-dev
+    # build-environment:
+      # - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
+    # override-build: |
+      # # Workaround a bug in snapcraft python plugin
+      # # https://forum.snapcraft.io/t/build-a-snap-with-any-version-of-python-i-want/10420/8
+      # rm -rf $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
+      # cp -r /usr/lib/python3.9/distutils $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
+      # mkdir -p $SNAPCRAFT_PART_INSTALL/usr/include/
+      # cp -r /usr/include/python3.9 $SNAPCRAFT_PART_INSTALL/usr/include/python3.9
+      # snapcraftctl build
       
   copy-source-code:
     after: [desktop-qt5]
@@ -144,6 +144,7 @@ parts:
     build-packages:
       - python3.9-venv
       - python3.9-dev
+      - python3-requests
       - python3-pip
       - python3-dev
       - python3-dbus
@@ -153,6 +154,8 @@ parts:
       - libpq-dev
     stage-packages:
       - libpq5
+      - python3.9-venv
+      - python3-requests
     python-packages:
       - pip
       - PyQt5 ~= 5.14.1
@@ -172,6 +175,16 @@ parts:
       - -bin/python
       - -bin/python3
       - -pyvenv.cfg
+    build-environment:
+      - SNAPCRAFT_PYTHON_INTERPRETER: python3.9
+    override-build: |
+      # Workaround a bug in snapcraft python plugin
+      # https://forum.snapcraft.io/t/build-a-snap-with-any-version-of-python-i-want/10420/8
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
+      cp -r /usr/lib/python3.9/distutils $SNAPCRAFT_PART_INSTALL/usr/lib/python3.9/distutils
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/include/
+      cp -r /usr/include/python3.9 $SNAPCRAFT_PART_INSTALL/usr/include/python3.9
+      snapcraftctl build
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
