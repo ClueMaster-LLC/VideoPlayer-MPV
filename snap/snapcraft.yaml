@@ -137,6 +137,7 @@ parts:
       - simplejson
       - psutil
       - websockets
+      - GPutil
     organize:
       usr/lib/*/samba/*: usr/lib/
 

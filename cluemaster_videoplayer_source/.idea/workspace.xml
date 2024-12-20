@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6d671b5-bc86-4686-aa7f-e914f2d80943" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/game_idle - Copy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apis.py" beforeDir="false" afterPath="$PROJECT_DIR$/apis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/authentication_screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/authentication_screen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_idle.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_idle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/master_overlay.py" beforeDir="false" afterPath="$PROJECT_DIR$/master_overlay.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/normal_screen.py" beforeDir="false" afterPath="$PROJECT_DIR$/normal_screen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_client_2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_client_3.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_server_1.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/threads.py" beforeDir="false" afterPath="$PROJECT_DIR$/threads.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/websocket_client.py" afterDir="false" />
-    </list>
+    <list default="true" id="f6d671b5-bc86-4686-aa7f-e914f2d80943" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,6 +59,7 @@
   <component name="RunManager" selected="Python.Main.py">
     <configuration name="websocket_client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="cluemaster_videoplayer_source" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
