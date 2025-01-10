@@ -1,6 +1,6 @@
 name: cluemaster-videoplayer-core
 base: core22
-version: '2025.01.08-DEVELOPMENT'
+version: '2025.01.10-DEVELOPMENT'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
   ClueMaster Video Player is a Dynamic TV Display software for escape rooms.
