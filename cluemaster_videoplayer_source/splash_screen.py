@@ -7,11 +7,9 @@ import random
 import time
 import subprocess
 import requests
-
 import threads
 from apis import *
 from settings import *
-
 import main
 from string import Template
 from requests.structures import CaseInsensitiveDict
@@ -20,7 +18,6 @@ from PyQt5.QtGui import QFont, QMovie, QIcon
 from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QDesktopWidget
 
 snap_version = os.environ.get("SNAP_VERSION")
-
 
 def fetch_ipv4_device_address():
     ip_address = None
@@ -213,6 +210,7 @@ class SplashWindow(QWidget):
         super().__init__()
 
         # default variables
+        self.main_layout = None
         self.splash_thread = None
         self.i_window = None
         self.screen_width = QApplication.desktop().width()
@@ -273,7 +271,7 @@ class SplashWindow(QWidget):
             threads.THREAD_INFO = thread_info_dictionary
 
     def frontend(self):
-        """ this methods holds the codes for the different labels and animations"""
+        """ this method holds the codes for the different labels and animations"""
 
         self.main_layout = QVBoxLayout()
 

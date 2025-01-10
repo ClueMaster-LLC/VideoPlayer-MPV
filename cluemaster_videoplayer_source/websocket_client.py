@@ -1,9 +1,7 @@
 import asyncio
-import os
 import platform
 import threading
 import time
-
 import websockets
 import json
 import GPUtil
@@ -14,7 +12,7 @@ from mpv import MPV
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from websockets.legacy.async_timeout import timeout
+# from websockets.legacy.async_timeout import timeout
 
 import threads
 from settings import *
