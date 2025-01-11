@@ -351,12 +351,6 @@ parts:
     prime:
       - -README.md
 
-  libnettle7:
-    plugin: dump
-    source: libnettle7/
-    organize:
-      "libnettle7/x86_64-linux-gnu/*": lib/
-
   extras:
     plugin: dump
     source: static/
