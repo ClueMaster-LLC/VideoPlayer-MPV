@@ -1,6 +1,6 @@
 name: cluemaster-videoplayer-core
-base: core22
-version: '2025.01.10-DEVELOPMENT'
+base: core20
+version: '2025.06.24-DEV'
 summary: Clumaster.io Video Player for Escape Rooms 
 description: |
   ClueMaster Video Player is a Dynamic TV Display software for escape rooms.
@@ -9,8 +9,7 @@ grade: stable
 confinement: strict
 
 architectures:
-  - build-on: [amd64]
-    build-for: [amd64]
+  - amd64
 
 apps:
   cluemaster-mediadisplay-core:
@@ -21,16 +20,6 @@ apps:
     command: usr/local/bin/x11_kiosk_launch $SNAP/bin/desktop-launch $SNAP/bin/prepare-launch $SNAP/bin/python3 $SNAP/main.py
     environment:
       DISABLE_WAYLAND: 1
-    plugs:
-    - network  # For internet communication
-    - audio-playback  # To allow audio playback using PulseAudio
-    - pulseaudio  # For PulseAudio interaction
-    - opengl  # For graphics rendering with Ubuntu Frame
-    - wayland  # Wayland support for Ubuntu Frame
-    - shutdown
-    - alsa
-    - hardware-observe
-    - network-bind
 
   pulseaudio:
     command: bin/pulseaudio
@@ -54,32 +43,18 @@ apps:
     command: bin/config
 
 plugs:
-  audio-playback:
+  playback:
     interface: audio-playback
-
-  pulseaudio:
-    interface: pulseaudio
-
-  opengl:
-    interface: opengl
-
   wayland:
-    interface: wayland
-   
   network:
-    interface: network
-  
+  opengl:
   network-bind:
-    interface: network-bind
-    
   shutdown:
-    interface: shutdown
-    
   hardware-observe:
-    interface: hardware-observe
-    
   alsa:
-    interface: alsa
+
+slots:
+  audio-playback:
 
 parts:
   copy-source-code:
@@ -87,17 +62,13 @@ parts:
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
-      - python3
       - bash
       - ffmpeg
       - libass9
-      - mpv
       - alsa-base
       - locales
       - libvdpau1
       - i965-va-driver
-      - libmpv1
-      #- libffi7 # ERROR FIX: mir_kiosk_x11: error while loading shared libraries: libffi.so.7 
       - va-driver-all
       - vdpau-driver-all
       - mesa-va-drivers
@@ -105,14 +76,12 @@ parts:
       - libglu1-mesa
       - samba-libs
       - git
-      - python3-dbus
       - qtwayland5
       - mesa-utils
       - libgl1-mesa-dri
       - python3-pyqt5.qtmultimedia
       - libqt5multimedia5-plugins
       - python3-pyqt5.qtsvg
-      - libqt5multimedia5
     stage:
       - -usr/share/alsa/alsa.conf
       - -usr/share/alsa/cards/HDA-Intel.conf
@@ -134,15 +103,15 @@ parts:
       - -usr/share/alsa/pcm/surround50.conf
       - -usr/share/alsa/pcm/surround51.conf
       - -usr/share/alsa/pcm/surround71.conf
-      #- -usr/lib/x86_64-linux-gnu/libFLAC.so.8.3.0
-      #- -usr/share/doc/libflac8/changelog.Debian.gz
-      #- -README.md
-      #- -usr/lib/x86_64-linux-gnu/libX11-xcb.so.1.0.0
-      #- -usr/lib/x86_64-linux-gnu/libX11.so.6.3.0
-      #- -usr/share/doc/libx11-6/changelog.Debian.gz
-      #- -usr/share/doc/libx11-data/changelog.Debian.gz
-      #- -usr/share/doc/libx11-xcb1/changelog.Debian.gz
-
+      - -usr/lib/x86_64-linux-gnu/libFLAC.so.8.3.0
+      - -usr/share/doc/libflac8/changelog.Debian.gz
+      - -usr/lib/x86_64-linux-gnu/libfreetype.so.6.17.1
+      - -usr/share/doc/libfreetype6/changelog.Debian.gz
+      - -usr/bin/pulseaudio
+      - -usr/lib/x86_64-linux-gnu/libpulse*
+      - -usr/lib/x86_64-linux-gnu/pulseaudio
+      - -lib/x86_64-linux-gnu/libpulse*
+      - -README.md
     stage-snaps: [mir-kiosk-x11]
 
   python-packages:
@@ -161,14 +130,64 @@ parts:
     python-packages:
       - PyQt5 ~= 5.14.1
       - requests
-      - git+https://github.com/ClueMaster-LLC/python-mpv
+      - git+https://github.com/Cluemaster-LLC/python-mpv
       - simplejson
       - psutil
-      - websockets
-      - GPutil
-      #- libffi7 # ERROR FIX: mir_kiosk_x11: error while loading shared libraries: libffi.so.7 
+      - gevent
     organize:
       usr/lib/*/samba/*: usr/lib/
+
+  mpv:
+    plugin: meson
+    source: https://github.com/mpv-player/mpv.git
+    source-tag: v0.35.0
+    source-depth: 1
+    build-packages:
+      - python3
+      - meson
+      - ninja-build
+      - build-essential
+      - pkg-config
+      - libasound2-dev
+      - libx11-dev
+      - libxext-dev
+      - libxinerama-dev
+      - libxrandr-dev
+      - libxss-dev
+      - libgl1-mesa-dev
+      - libegl1-mesa-dev
+      - libwayland-dev
+      - wayland-protocols
+      - libdrm-dev
+      - libavcodec-dev
+      - libavfilter-dev
+      - libavformat-dev
+      - libswresample-dev
+      - libswscale-dev
+      - liblua5.2-dev
+      - libfreetype6-dev
+      - libjpeg-dev
+      - libuchardet-dev
+      - liblcms2-dev
+      - libarchive-dev
+      - libass-dev
+      - libxkbcommon-dev
+      - libxpresent-dev 
+
+    stage-packages:
+      - liblcms2-2
+      - libarchive13
+      - liblua5.2-0
+      - libuchardet0
+      - libxpresent1
+
+    meson-parameters:
+      - --prefix=/usr
+      - -Dlibmpv=true
+      - -Dlua=lua52
+      - -Dgl=enabled
+      - -Dx11=enabled
+      - -Dwayland=enabled
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -181,8 +200,7 @@ parts:
       - dpkg-dev
     stage-packages:
       - libxkbcommon0
-      #- ttf-ubuntu-font-family #no longer included in CORE22+
-      - fonts-ubuntu
+      - ttf-ubuntu-font-family
       - dmz-cursor-theme
       - light-themes
       - adwaita-icon-theme
@@ -191,7 +209,7 @@ parts:
       - libqt5gui5
       - libgdk-pixbuf2.0-0
       - libqt5svg5 
-      #- try: [appmenu-qt5]
+      - try: [appmenu-qt5]
       - locales-all
       - xdg-user-dirs
       - libdrm2
@@ -208,19 +226,6 @@ parts:
     stage:
       - -usr/lib/x86_64-linux-gnu/libwebp.so.6.0.2
       - -usr/share/doc/libwebp6/changelog.Debian.gz
-      
-      - -urs/lib/* # added for file or permission errors.
-      - -usr/share/* # added for file or permission errors.
-      - -etc/* # added for file or permission errors.
-      - -usr/lib/x86_64-linux-gnu/* # added for file or permission errors.
-
-  pulseaudio-common:
-    source: bin
-    plugin: dump
-    organize:
-      client-wrapper: bin/client-wrapper
-      config: bin/config
-      pulseaudio: bin/pulseaudio
 
   alsa-lib:
     plugin: autotools
@@ -239,7 +244,6 @@ parts:
     source-depth: 1
     after: [ alsa-lib ]
     build-packages:
-      - meson
       - check
       - doxygen
       - intltool
@@ -264,9 +268,7 @@ parts:
       - libflac8
       - libglib2.0-0
       - libgomp1
-      #- libjson-c4
-      - libjson-c5 # Replace libjson-c4 with libjson-c5
-      - libc6-dev #testing to replace libjson-c4
+      - libjson-c4
       - libltdl7
       - libogg0
       - libsbc1
@@ -280,30 +282,34 @@ parts:
       - libvorbis0a
       - libvorbisenc2
     meson-parameters:
-      - --prefix=/usr
+      - --prefix="/usr"
       - --sysconfdir=/etc
       - --libexec=/usr/lib
       - --libdir=/usr/lib
       - --localstatedir=/var
-      - -Dgstreamer=disabled
-      - -Dbluez5-gstreamer=disabled
-      - -Dorc=disabled
-      - -Dgsettings=disabled
-      - -Dadrian-aec=false
-      - -Dgtk=disabled
-      - -Dhal-compat=false
-      - -Dwebrtc-aec=disabled
-      - -Doss-output=disabled
-      - -Djack=disabled
-      - -Dx11=disabled
-      - -Dsystem_user=root
-      - -Dsystem_group=root
-      - -Daccess_group=root
+      - -Dgstreamer="disabled"
+      - -Dbluez5-gstreamer="disabled"
+      - -Dorc="disabled"
+      - -Dgsettings="disabled"
+      - -Dadrian-aec="false"
+      - -Dgtk="disabled"
+      - -Dhal-compat="false"
+      - -Dwebrtc-aec="disabled"
+      - -Doss-output="disabled"
+      - -Djack="disabled"
+      - -Dx11="disabled"
+      - -Dsystem_user="root"
+      - -Dsystem_group="root"
+      - -Daccess_group="root"
     override-build: |
-      craftctl default
-      mkdir -p $CRAFT_PART_INSTALL/usr/share/applications     
+      snapcraftctl build
+      VER=$(cd $SNAPCRAFT_PART_SRC; git tag | sed 's/^v//')
+      snapcraftctl set-version $VER
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
+      install -m 755 $SNAPCRAFT_PART_BUILD/src/daemon/pulseaudio $SNAPCRAFT_PART_INSTALL/usr/bin/pulseaudio
+
     override-prime: |
-      craftctl prime
+      snapcraftctl prime
       find usr/share/doc/ -type f,l ! -name copyright | xargs rm -rf
     prime:
       - -usr/include
@@ -331,7 +337,7 @@ parts:
     prime:
       - -usr/lib/alsa-lib/*.la
     override-prime: |
-      craftctl prime
+      snapcraftctl prime
       # make links relative
       cd etc/alsa/conf.d
       for link in $(find . -type l); do
@@ -356,9 +362,12 @@ parts:
     source: static/
     organize:
       "prepare-launch": "bin/"
+      "client-wrapper": "bin/"
+      "config": "bin/"
+      "pulseaudio": "bin/pulseaudio"
 
 environment:
-  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib"
+  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib"
   PULSE_RUNTIME_PATH: /var/run/pulse
   PULSE_STATE_PATH: $SNAP_COMMON/state
   ALSA_CONFIG_UCM: $SNAP/usr/share/alsa/ucm2
@@ -366,6 +375,8 @@ environment:
   ALSA_CONFIG_PATH: $SNAP/usr/share/alsa/alsa.conf
   ALSA_MIXER_SIMPLE: $SNAP/usr/share/alsa/smixer.conf
   ALSA_PLUGIN_DIR: $SNAP/usr/lib/alsa-lib
+  QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
+  QT_PLUGIN_PATH: $SNAP/usr/lib/x86_64-linux-gnu/qt5/plugins
 
 
 layout:
@@ -397,4 +408,4 @@ layout:
     symlink: $SNAP/usr/share/alsa
   /usr/share/applications:
     bind: $SNAP/usr/share/applications
-    
+
