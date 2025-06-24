@@ -142,7 +142,7 @@ class EndAudioMediaWidget(QMainWindow):
     def verify_status_of_master_audio_player(self, event):
         """ this method is triggered with every event emitted by the media player"""
 
-        current_event_id = event["event_id"]
+        current_event_id = event.event_id.value
         end_of_file_event_id = 7
 
         if current_event_id == end_of_file_event_id:
@@ -209,7 +209,7 @@ class EndMediaWidget(QWidget):
         """this method checks if the current event emitted by the media players is end of file event, if it is then
            close the media player and the window else pass"""
 
-        event_id = event["event_id"]
+        event_id = event.event_id.value
         end_of_file_id = 7
 
         if event_id == end_of_file_id:
@@ -271,7 +271,7 @@ class IntroVideoWindow(QWidget):
         """this method checks if the current event emitted by the media players is end of file event, if it is then
            close the media player and the window else pass"""
 
-        event_id = event["event_id"]
+        event_id = event.event_id.value
         end_of_file_event_id = 7
 
         if event_id == end_of_file_event_id:

@@ -135,7 +135,7 @@ class ClueVideoWidget(QWidget):
     def verify_status_of_master_clue_video_player(self, event):
         """ this method is triggered with every event emitted by the media player"""
 
-        current_event_id = event["event_id"]
+        current_event_id = event.event_id.value
         end_of_file_event_id = 7
 
         if current_event_id == end_of_file_event_id:
@@ -263,7 +263,7 @@ class AudioClueContainer(QWidget):
     def verify_status_of_master_audio_player(self, event):
         """ this method is triggered with every event emitted by the media player"""
 
-        current_event_id = event["event_id"]
+        current_event_id = event.event_id.value
         end_of_file_event_id = 7
 
         if current_event_id == end_of_file_event_id:
