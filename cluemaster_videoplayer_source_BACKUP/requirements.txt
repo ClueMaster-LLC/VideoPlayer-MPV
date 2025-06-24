@@ -1,6 +1,0 @@
-PyQt5
-requests
-git+https://github.com/ClueMaster-LLC/python-mpv
-simplejson
-mpv
-websockets
