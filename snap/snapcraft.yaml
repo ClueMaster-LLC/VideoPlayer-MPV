@@ -134,6 +134,8 @@ parts:
       - simplejson
       - psutil
       - gevent
+      - websockets
+      - GPUtil
     organize:
       usr/lib/*/samba/*: usr/lib/
 
