@@ -41,6 +41,9 @@ class GameIdleMPVPlayer(QWidget):
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json")) as master_specs:
             config = json.load(master_specs)["mpv_configurations"]
 
+        print("========== device gpu config ===================")
+        print("------>>>", config)
+
         # widget
         if PLATFORM == "Intel":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
