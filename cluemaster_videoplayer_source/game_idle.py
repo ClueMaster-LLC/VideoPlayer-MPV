@@ -41,14 +41,14 @@ class GameIdleMPVPlayer(QWidget):
         with open(os.path.join(MASTER_DIRECTORY, "assets/application data/platform_specs.json")) as master_specs:
             config = json.load(master_specs)["mpv_configurations"]
 
-        print("========== device gpu config ===================")
-        print("------>>>", config)
-
         # widget
         if PLATFORM == "Intel":
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
+                                                        gpu_context="x11egl",
+                                                        loglevel="info",
+                                                        log_handler=self.mpv_log_handler,
                                                         input_default_bindings=True,
                                                         input_vo_keyboard=True,
                                                         loop_playlist="inf",
@@ -58,15 +58,19 @@ class GameIdleMPVPlayer(QWidget):
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
                                                         hwdec=config["hwdec"],
                                                         vo=config["vo"],
+                                                        gpu_context="x11egl",
+                                                        loglevel="info",
+                                                        log_handler=self.mpv_log_handler,
                                                         input_default_bindings=True,
                                                         input_vo_keyboard=True,
                                                         loop_playlist="inf",
                                                         image_display_duration="5"
                                                         )
         else:
-            print("game_idle - GPU TYPE: VM MPV Player")
             self.master_animated_image_player = mpv.MPV(wid=str(int(self.winId())),
-                                                        vo=config["vo"],
+                                                        vo="x11",
+                                                        loglevel="info",
+                                                        log_handler=self.mpv_log_handler,
                                                         input_default_bindings=True,
                                                         input_vo_keyboard=True,
                                                         loop_playlist="inf",
@@ -76,6 +80,9 @@ class GameIdleMPVPlayer(QWidget):
         # instance methods
         self.window_configurations()
         self.frontend()
+    
+    def mpv_log_handler(self, level, component, message):
+        print(f"[IDLE MPV:{level}] [{component}] {message}")
 
     def window_configurations(self):
         """ this method contains code for the configurations of the window"""

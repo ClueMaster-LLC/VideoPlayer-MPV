@@ -42,6 +42,9 @@ apps:
   config:
     command: bin/config
 
+  shell:
+    command: bin/bash
+
 plugs:
   playback:
     interface: audio-playback
@@ -62,6 +65,7 @@ parts:
     plugin: dump
     source: cluemaster_videoplayer_source/
     stage-packages:
+      - python3
       - bash
       - ffmpeg
       - libass9
@@ -76,6 +80,7 @@ parts:
       - libglu1-mesa
       - samba-libs
       - git
+      - python3-dbus
       - qtwayland5
       - mesa-utils
       - libgl1-mesa-dri
@@ -107,10 +112,6 @@ parts:
       - -usr/share/doc/libflac8/changelog.Debian.gz
       - -usr/lib/x86_64-linux-gnu/libfreetype.so.6.17.1
       - -usr/share/doc/libfreetype6/changelog.Debian.gz
-      - -usr/bin/pulseaudio
-      - -usr/lib/x86_64-linux-gnu/libpulse*
-      - -usr/lib/x86_64-linux-gnu/pulseaudio
-      - -lib/x86_64-linux-gnu/libpulse*
       - -README.md
     stage-snaps: [mir-kiosk-x11]
 
@@ -130,7 +131,7 @@ parts:
     python-packages:
       - PyQt5 ~= 5.14.1
       - requests
-      - git+https://github.com/Cluemaster-LLC/python-mpv
+      - git+https://github.com/ClueMaster-LLC/python-mpv
       - simplejson
       - psutil
       - gevent
@@ -147,6 +148,7 @@ parts:
     build-packages:
       - python3
       - meson
+      - cmake
       - ninja-build
       - build-essential
       - pkg-config
@@ -175,21 +177,26 @@ parts:
       - libass-dev
       - libxkbcommon-dev
       - libxpresent-dev 
-
+      - libva-dev
+      - libvdpau-dev
     stage-packages:
       - liblcms2-2
       - libarchive13
       - liblua5.2-0
       - libuchardet0
       - libxpresent1
-
+      - libva-wayland2
     meson-parameters:
       - --prefix=/usr
       - -Dlibmpv=true
       - -Dlua=lua52
+      - -Dcplayer=true
       - -Dgl=enabled
       - -Dx11=enabled
       - -Dwayland=enabled
+      - -Dvaapi=enabled
+      - -Dvdpau=enabled
+      - -Degl=enabled
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -228,6 +235,14 @@ parts:
     stage:
       - -usr/lib/x86_64-linux-gnu/libwebp.so.6.0.2
       - -usr/share/doc/libwebp6/changelog.Debian.gz
+
+  pulseaudio-common:
+    source: bin
+    plugin: dump
+    organize:
+      client-wrapper: bin/client-wrapper
+      config: bin/config
+      pulseaudio: bin/pulseaudio
 
   alsa-lib:
     plugin: autotools
@@ -305,11 +320,9 @@ parts:
       - -Daccess_group="root"
     override-build: |
       snapcraftctl build
-      VER=$(cd $SNAPCRAFT_PART_SRC; git tag | sed 's/^v//')
+      VER=$(cd $SNAPCRAFT_PART_SRC; git tag|sed 's/^v//')
       snapcraftctl set-version $VER
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
-      install -m 755 $SNAPCRAFT_PART_BUILD/src/daemon/pulseaudio $SNAPCRAFT_PART_INSTALL/usr/bin/pulseaudio
-
     override-prime: |
       snapcraftctl prime
       find usr/share/doc/ -type f,l ! -name copyright | xargs rm -rf
@@ -364,12 +377,9 @@ parts:
     source: static/
     organize:
       "prepare-launch": "bin/"
-      "client-wrapper": "bin/"
-      "config": "bin/"
-      "pulseaudio": "bin/pulseaudio"
 
 environment:
-  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib:$SNAP/usr/lib/x86_64-linux-gnu:$SNAP/usr/lib"
+  LD_LIBRARY_PATH: "$SNAP/usr/lib/pulseaudio:$SNAP/usr/lib/alsa-lib"
   PULSE_RUNTIME_PATH: /var/run/pulse
   PULSE_STATE_PATH: $SNAP_COMMON/state
   ALSA_CONFIG_UCM: $SNAP/usr/share/alsa/ucm2
@@ -377,8 +387,6 @@ environment:
   ALSA_CONFIG_PATH: $SNAP/usr/share/alsa/alsa.conf
   ALSA_MIXER_SIMPLE: $SNAP/usr/share/alsa/smixer.conf
   ALSA_PLUGIN_DIR: $SNAP/usr/lib/alsa-lib
-  QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
-  QT_PLUGIN_PATH: $SNAP/usr/lib/x86_64-linux-gnu/qt5/plugins
 
 
 layout:
@@ -410,4 +418,3 @@ layout:
     symlink: $SNAP/usr/share/alsa
   /usr/share/applications:
     bind: $SNAP/usr/share/applications
-

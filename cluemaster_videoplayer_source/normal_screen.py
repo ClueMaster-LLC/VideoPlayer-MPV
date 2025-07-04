@@ -179,11 +179,11 @@ class EndMediaWidget(QWidget):
 
         # widgets
         if PLATFORM == "Intel":
-            self.end_media_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
+            self.end_media_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl")
         elif PLATFORM == "AMD":
-            self.end_media_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
+            self.end_media_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl")
         else:
-            self.end_media_player = mpv.MPV(wid=str(int(self.winId())), vo=config["vo"])
+            self.end_media_player = mpv.MPV(wid=str(int(self.winId())), vo="x11")
 
         # variables
         self.file_name = file_name
@@ -245,15 +245,18 @@ class IntroVideoWindow(QWidget):
 
         # widgets
         if PLATFORM == "Intel":
-            self.master_intro_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
+            self.master_intro_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl", loglevel="info", log_handler=self.mpv_log_handler)
         elif PLATFORM == "AMD":
-            self.master_intro_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
+            self.master_intro_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl", loglevel="info", log_handler=self.mpv_log_handler)
         else:
-            self.master_intro_video_player = mpv.MPV(wid=str(int(self.winId())), vo=config["vo"])
+            self.master_intro_video_player = mpv.MPV(wid=str(int(self.winId())), vo="x11", log_handler=self.mpv_log_handler, loglevel="info")
 
         # instance methods
         self.window_configurations()
         self.frontend()
+
+    def mpv_log_handler(self, level, component, message):
+        print(f"[INTRO MPV:{level}] [{component}] {message}")
 
     def window_configurations(self):
         """ this method contains the codes for the configurations of the window"""
@@ -315,16 +318,16 @@ class NormalWindow(QMainWindow):
             config = json.load(master_specs)["mpv_configurations"]
 
         if PLATFORM == "Intel":
-            self.master_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
-            self.master_picture_displayer = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
+            self.master_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl", loglevel="info", log_handler=self.mpv_log_handler)
+            self.master_picture_displayer = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl", loglevel="info", log_handler=self.mpv_log_handler_pic)
 
         elif PLATFORM == "AMD":
-            self.master_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
-            self.master_picture_displayer = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"])
+            self.master_video_player = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl", loglevel="info", log_handler=self.mpv_log_handler)
+            self.master_picture_displayer = mpv.MPV(wid=str(int(self.winId())), hwdec=config["hwdec"], vo=config["vo"], gpu_context="x11egl", loglevel="info", log_handler=self.mpv_log_handler_pic)
 
         else:
-            self.master_video_player = mpv.MPV(wid=str(int(self.winId())), vo=config["vo"])
-            self.master_picture_displayer = mpv.MPV(wid=str(int(self.winId())), vo=config["vo"])
+            self.master_video_player = mpv.MPV(wid=str(int(self.winId())), vo="x11", loglevel="info", log_handler=self.mpv_log_handler)
+            self.master_picture_displayer = mpv.MPV(wid=str(int(self.winId())), vo="x11", loglevel="info", log_handler=self.mpv_log_handler_pic)
 
         # # widget
         # if PLATFORM == "Intel":
@@ -420,6 +423,12 @@ class NormalWindow(QMainWindow):
         self.showFullScreen()
         self.window_configurations()
         self.frontend()
+
+    def mpv_log_handler(self, level, component, message):
+        print(f"[NORMAL MPV:{level}] [{component}] {message}")
+
+    def mpv_log_handler_pic(self, level, component, message):
+        print(f"[NORMAL PIC MPV:{level}] [{component}] {message}")
 
     def restore_thread_status(self):
         """ This method restores the status of threads"""
